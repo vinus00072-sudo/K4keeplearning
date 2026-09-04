@@ -17,7 +17,7 @@ function renderCourses(list){
  <div class="course-img">${c.thumbnail_url?`<img src="${esc(c.thumbnail_url)}" alt="">`:icons[i%icons.length]}</div>
  <div class="course-body"><h3>${esc(c.title)}</h3><p>${esc(c.description||"Online course")}</p>
  <div class="rating">★★★★★ <span>${c.rating||"5.0"}</span></div>
- <div class="price">₹${Number(c.price).toLocaleString("en-IN")} <small>/course</small></div>
+ <div class="price">${c.original_price && Number(c.original_price)>Number(c.price)?`<s>₹${Number(c.original_price).toLocaleString("en-IN")}</s> <strong>₹${Number(c.price).toLocaleString("en-IN")}</strong><b class="discount-badge">${Math.round((1-Number(c.price)/Number(c.original_price))*100)}% OFF</b>`:`₹${Number(c.price).toLocaleString("en-IN")}`} <small>/course</small></div>
  <a class="btn btn-primary course-btn" href="course.html?id=${encodeURIComponent(c.id)}">View Course</a>
  </div></article>`).join("");
 }

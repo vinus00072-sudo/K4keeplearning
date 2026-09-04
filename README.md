@@ -20,3 +20,7 @@ The current V5 prepares the course video/player experience. Razorpay payment + s
 
 ## Deployment
 Use GitHub -> Vercel. Do not keep creating new Vercel projects by ZIP upload.
+
+
+## Discount pricing
+Run `discount-pricing.sql` once in Supabase. In Admin, enter Original Price and Selling Price. The website automatically shows the crossed-out original price and calculated % OFF.
