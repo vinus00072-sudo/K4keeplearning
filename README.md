@@ -9,7 +9,7 @@
 - Admin dashboard can add/edit/delete video lessons
 - Video URL supports YouTube/Vimeo/MP4
 - Optional PDF study material URL
-- Mobile course-card layout fixed to avoid text clipping
+- course-card layout fixed to avoid text clipping
 - Supabase connected
 
 ## Supabase step
