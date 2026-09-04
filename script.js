@@ -46,3 +46,55 @@ function closeModal(){document.getElementById("modal").classList.remove("show")}
 document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 loadCourses();
+
+/* Lamp-based Sign In / Sign Up */
+let lampDragging=false, lampStartY=0, lampPull=0, lampAuthType='login';
+const authCord=document.getElementById('authCord');
+const lampWelcome=document.getElementById('lampWelcome');
+const lampAuthContent=document.getElementById('lampAuthContent');
+
+function lampAuthMarkup(type){
+ const login=type==='login';
+ lampAuthContent.innerHTML=`
+   <h2>Welcome</h2>
+   <p>Login to continue your learning journey</p>
+   <div class="lamp-tabs">
+     <button class="${login?'active':''}" onclick="setLampAuthType('login')">Sign In</button>
+     <button class="${!login?'active':''}" onclick="setLampAuthType('signup')">Sign Up</button>
+   </div>
+   ${login ? `
+     <input id="lampEmail" type="email" placeholder="Enter email" autocomplete="email">
+     <input id="lampPassword" type="password" placeholder="Enter password" autocomplete="current-password">
+     <button class="btn lamp-auth-btn" onclick="lampLogin()">Sign In</button>
+     <p class="lamp-small">New here? <a href="#" onclick="setLampAuthType('signup');return false">Create account</a></p>` : `
+     <input id="lampName" type="text" placeholder="Full name" autocomplete="name">
+     <input id="lampEmail" type="email" placeholder="Enter email" autocomplete="email">
+     <input id="lampPassword" type="password" placeholder="Create password" autocomplete="new-password">
+     <button class="btn lamp-auth-btn" onclick="lampSignup()">Create Account</button>
+     <p class="lamp-small">Already have an account? <a href="#" onclick="setLampAuthType('login');return false">Sign in</a></p>`}`;
+}
+function setLampAuthType(type){lampAuthType=type;lampAuthMarkup(type);lampWelcome.classList.add('show')}
+function openLampAuth(type='login'){lampAuthType=type;lampAuthMarkup(type);document.getElementById('modal').classList.add('show');lampWelcome.classList.remove('show');lampPull=0;authCord.style.transform='translateY(0)'}
+function closeLampAuth(){document.getElementById('modal').classList.remove('show');lampDragging=false;lampPull=0;authCord.style.transform='translateY(0)';lampWelcome.classList.remove('show')}
+function showAuth(type,msg=''){ if(type==='contact'){showAuthLegacy(type,msg)} else openLampAuth(type); }
+function showAuthLegacy(type,msg=''){ let content=''; if(type==='contact') content=`<h2>Contact KeepLearning</h2><input placeholder="Your name"><input type="email" placeholder="Email address"><input placeholder="Message"><button class="btn btn-primary" onclick="alert('Thanks! We will contact you.');closeModal()">Send Message</button>`; document.getElementById('modalContent').innerHTML=content; document.getElementById('modal').classList.add('show'); }
+
+async function lampLogin(){
+ const email=document.getElementById('lampEmail').value.trim(), password=document.getElementById('lampPassword').value;
+ if(!email||!password){alert('Please enter email and password.');return}
+ const {error}=await sb.auth.signInWithPassword({email,password});
+ if(error){alert(error.message);return} closeLampAuth(); alert('Login successful!');
+}
+async function lampSignup(){
+ const name=document.getElementById('lampName').value.trim(), email=document.getElementById('lampEmail').value.trim(), password=document.getElementById('lampPassword').value;
+ if(!name||!email||!password){alert('Please complete all fields.');return}
+ const {error}=await sb.auth.signUp({email,password,options:{data:{full_name:name}}});
+ if(error){alert(error.message);return} closeLampAuth(); alert('Account created. Check your email if confirmation is enabled.');
+}
+
+if(authCord){
+ authCord.addEventListener('pointerdown',e=>{lampDragging=true;lampStartY=e.clientY;authCord.setPointerCapture(e.pointerId);e.preventDefault()});
+ authCord.addEventListener('pointermove',e=>{if(!lampDragging)return;let pull=Math.max(0,Math.min(100,e.clientY-lampStartY));lampPull=pull;authCord.style.transform=`translateY(${pull}px)`;if(pull>=38)lampWelcome.classList.add('show');else lampWelcome.classList.remove('show')});
+ const release=()=>{if(!lampDragging)return;lampDragging=false;authCord.style.transform='translateY(0)';lampPull=0;lampWelcome.classList.remove('show')};
+ authCord.addEventListener('pointerup',release);authCord.addEventListener('pointercancel',release);
+}
