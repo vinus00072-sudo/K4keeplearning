@@ -24,3 +24,11 @@ Use GitHub -> Vercel. Do not keep creating new Vercel projects by ZIP upload.
 
 ## Discount pricing
 Run `discount-pricing.sql` once in Supabase. In Admin, enter Original Price and Selling Price. The website automatically shows the crossed-out original price and calculated % OFF.
+
+
+## Paid Course Access
+- Course page now checks `public.enrollments` before loading lessons.
+- Non-enrolled users see a locked course message.
+- Enrolled users see all lessons in lesson order and can play YouTube/Vimeo/MP4 URLs.
+- `test-enrollment.sql` can be used only for temporary testing before Razorpay is connected.
+- Real payment and automatic enrollment will be added with Razorpay server-side verification.
