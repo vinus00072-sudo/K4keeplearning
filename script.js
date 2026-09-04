@@ -48,7 +48,7 @@ function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&l
 loadCourses();
 
 /* Lamp-based Sign In / Sign Up */
-let lampDragging=false, lampStartY=0, lampPull=0, lampAuthType='login';
+let lampDragging=false, lampStartY=0, lampPull=0, lampAuthType='login', lampLatched=false;
 const authCord=document.getElementById('authCord');
 const lampWelcome=document.getElementById('lampWelcome');
 const lampAuthContent=document.getElementById('lampAuthContent');
@@ -74,8 +74,8 @@ function lampAuthMarkup(type){
      <p class="lamp-small">Already have an account? <a href="#" onclick="setLampAuthType('login');return false">Sign in</a></p>`}`;
 }
 function setLampAuthType(type){lampAuthType=type;lampAuthMarkup(type);lampWelcome.classList.add('show')}
-function openLampAuth(type='login'){lampAuthType=type;lampAuthMarkup(type);document.getElementById('modal').classList.add('show');lampWelcome.classList.remove('show');lampPull=0;authCord.style.transform='translateY(0)'}
-function closeLampAuth(){document.getElementById('modal').classList.remove('show');lampDragging=false;lampPull=0;authCord.style.transform='translateY(0)';lampWelcome.classList.remove('show')}
+function openLampAuth(type='login'){lampAuthType=type;lampAuthMarkup(type);document.getElementById('modal').classList.add('show');lampWelcome.classList.remove('show');lampDragging=false;lampLatched=false;lampPull=0;authCord.style.transform='translateY(0)'}
+function closeLampAuth(){document.getElementById('modal').classList.remove('show');lampDragging=false;lampLatched=false;lampPull=0;authCord.style.transform='translateY(0)';lampWelcome.classList.remove('show')}
 function showAuth(type,msg=''){ if(type==='contact'){showAuthLegacy(type,msg)} else openLampAuth(type); }
 function showAuthLegacy(type,msg=''){ let content=''; if(type==='contact') content=`<h2>Contact KeepLearning</h2><input placeholder="Your name"><input type="email" placeholder="Email address"><input placeholder="Message"><button class="btn btn-primary" onclick="alert('Thanks! We will contact you.');closeModal()">Send Message</button>`; document.getElementById('modalContent').innerHTML=content; document.getElementById('modal').classList.add('show'); }
 
@@ -93,8 +93,39 @@ async function lampSignup(){
 }
 
 if(authCord){
- authCord.addEventListener('pointerdown',e=>{lampDragging=true;lampStartY=e.clientY;authCord.setPointerCapture(e.pointerId);e.preventDefault()});
- authCord.addEventListener('pointermove',e=>{if(!lampDragging)return;let pull=Math.max(0,Math.min(100,e.clientY-lampStartY));lampPull=pull;authCord.style.transform=`translateY(${pull}px)`;if(pull>=38)lampWelcome.classList.add('show');else lampWelcome.classList.remove('show')});
- const release=()=>{if(!lampDragging)return;lampDragging=false;authCord.style.transform='translateY(0)';lampPull=0;lampWelcome.classList.remove('show')};
- authCord.addEventListener('pointerup',release);authCord.addEventListener('pointercancel',release);
+ const TRIGGER_PULL=38;
+ const MAX_PULL=82;
+ authCord.addEventListener('pointerdown',e=>{
+   if(lampLatched)return;
+   lampDragging=true;
+   lampStartY=e.clientY;
+   authCord.setPointerCapture(e.pointerId);
+   e.preventDefault();
+ });
+ authCord.addEventListener('pointermove',e=>{
+   if(!lampDragging || lampLatched)return;
+   let pull=Math.max(0,Math.min(MAX_PULL,e.clientY-lampStartY));
+   lampPull=pull;
+   authCord.style.transform=`translateY(${pull}px)`;
+   if(pull>=TRIGGER_PULL)lampWelcome.classList.add('show');
+   else lampWelcome.classList.remove('show');
+ });
+ const release=()=>{
+   if(!lampDragging)return;
+   lampDragging=false;
+   // Once the cord is pulled far enough, latch it down.
+   // Releasing the mouse/finger no longer makes the cord jump back up.
+   if(lampPull>=TRIGGER_PULL){
+     lampLatched=true;
+     lampPull=MAX_PULL;
+     authCord.style.transform=`translateY(${MAX_PULL}px)`;
+     lampWelcome.classList.add('show');
+   }else{
+     lampPull=0;
+     authCord.style.transform='translateY(0)';
+     lampWelcome.classList.remove('show');
+   }
+ };
+ authCord.addEventListener('pointerup',release);
+ authCord.addEventListener('pointercancel',release);
 }
