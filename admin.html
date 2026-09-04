@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KeepLearning Admin</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="offer">KeepLearning — Admin Dashboard</div><header class="header"><div class="container nav"><a class="logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Admin</small></span></a><button class="btn btn-outline" id="logoutBtn">Logout</button></div></header>
+<main class="section"><div class="container admin-wrap"><div id="status" class="loading">Loading admin panel…</div>
+<div id="dashboard" style="display:none"><div class="section-head left"><h2>Manage <span>Courses & Videos</span></h2><p>Add courses, then add modules/lessons and paste video URLs.</p></div>
+<div class="admin-card"><h3>Add / Edit Course</h3><input id="courseId" type="hidden"><input id="title" placeholder="Course title"><textarea id="description" placeholder="Course description"></textarea><div class="admin-two"><input id="price" type="number" placeholder="Price ₹"><input id="category" placeholder="Category"></div><div class="admin-two"><input id="level" placeholder="Level"><input id="duration" placeholder="Duration"></div><input id="thumbnail" placeholder="Thumbnail image URL (optional)"><label class="check"><input id="published" type="checkbox"> Publish course</label><button class="btn btn-primary" id="saveCourseBtn">Save Course</button> <button class="btn btn-outline" id="clearCourseBtn">Clear</button></div>
+<div id="courseList" class="admin-list"></div>
+<div id="lessonPanel" class="admin-card" style="display:none"><h3>Add Video Lesson</h3><p id="selectedCourseLabel" class="muted"></p><input id="lessonId" type="hidden"><input id="lessonTitle" placeholder="Lesson title e.g. What is Software Testing?"><textarea id="lessonDescription" placeholder="Lesson description (optional)"></textarea><input id="videoUrl" placeholder="Video URL — YouTube, Vimeo or MP4"><input id="pdfUrl" placeholder="Study material PDF URL (optional)"><div class="admin-two"><input id="lessonOrder" type="number" min="1" value="1" placeholder="Lesson order"><label class="check"><input id="freeLesson" type="checkbox"> Free preview lesson</label></div><button class="btn btn-primary" id="saveLessonBtn">Save Lesson</button> <button class="btn btn-outline" id="closeLessonBtn">Close</button><div id="lessonList" class="lesson-admin-list"></div></div></div></div></main>
+<script>
+(function(){
+  const statusEl=document.getElementById('status');
+  const setStatus=(msg)=>{statusEl.textContent=msg;statusEl.style.display='block'};
+  const scripts=[
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+    'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
+  ];
+  let index=0;
+  function loadSupabase(){
+    if(index>=scripts.length){setStatus('Could not load Supabase library. Please check internet connection and refresh.');return;}
+    const s=document.createElement('script');
+    s.src=scripts[index++];
+    s.onload=()=>{ if(window.supabase){ start(); } else { loadSupabase(); } };
+    s.onerror=()=>loadSupabase();
+    document.head.appendChild(s);
+  }
+  function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+  const SUPABASE_URL='https://vowlzxhgjyzwzlhdgrnz.supabase.co';
+  const SUPABASE_KEY='sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY';
+  let sb,courses=[],selectedCourse=null,lessons=[];
+  const $=id=>document.getElementById(id);
+  async function start(){
+    try{
+      sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+      setStatus('Checking login…');
+      const result=await Promise.race([sb.auth.getSession(),new Promise((_,r)=>setTimeout(()=>r(new Error('Login check timed out.')),10000))]);
+      const user=result&&result.data&&result.data.session&&result.data.session.user;
+      if(!user){setStatus('No admin login session found. Please login on the main website first, then open Admin again.');return;}
+      setStatus('Checking admin role…');
+      const pr=await Promise.race([sb.from('profiles').select('role').eq('id',user.id).maybeSingle(),new Promise((_,r)=>setTimeout(()=>r(new Error('Profile check timed out.')),10000))]);
+      if(pr.error){setStatus('Profile check failed: '+pr.error.message);return;}
+      if(!pr.data){setStatus('Profile not found for this login.');return;}
+      if(pr.data.role!=='admin'){setStatus('Access denied. Current role: '+(pr.data.role||'not set'));return;}
+      statusEl.style.display='none';$('dashboard').style.display='block';await loadCourses();
+    }catch(e){setStatus('Admin check failed: '+(e&&e.message?e.message:e));}
+  }
+  async function loadCourses(){const r=await sb.from('courses').select('*').order('created_at',{ascending:false});if(r.error){setStatus('Courses could not be loaded: '+r.error.message);return}courses=r.data||[];renderCourses()}
+  function renderCourses(){$('courseList').innerHTML=courses.map(c=>`<article class="admin-course"><div><h3>${esc(c.title)}</h3><p>₹${Number(c.price).toLocaleString('en-IN')} • ${esc(c.category||'')} • ${c.is_published?'Published':'Draft'}</p></div><div class="admin-actions"><button class="btn btn-outline" data-edit="${c.id}">Edit</button><button class="btn btn-primary" data-lessons="${c.id}">Videos / Lessons</button><button class="btn btn-outline" data-delete="${c.id}">Delete</button></div></article>`).join('')||'<p>No courses yet.</p>'}
+  $('courseList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.edit)editCourse(b.dataset.edit);if(b.dataset.lessons)openLessons(b.dataset.lessons);if(b.dataset.delete)delCourse(b.dataset.delete)});
+  async function saveCourse(){const id=$('courseId').value,obj={title:$('title').value.trim(),description:$('description').value.trim(),price:Number($('price').value||0),category:$('category').value.trim(),level:$('level').value.trim(),duration:$('duration').value.trim(),thumbnail_url:$('thumbnail').value.trim()||null,is_published:$('published').checked,updated_at:new Date().toISOString()};if(!obj.title||!obj.price){alert('Title and price are required.');return}const r=id?await sb.from('courses').update(obj).eq('id',id):await sb.from('courses').insert(obj);if(r.error){alert(r.error.message);return}clearForm();loadCourses()}
+  function editCourse(id){const c=courses.find(x=>x.id===id);if(!c)return;$('courseId').value=c.id;$('title').value=c.title;$('description').value=c.description||'';$('price').value=c.price;$('category').value=c.category||'';$('level').value=c.level||'';$('duration').value=c.duration||'';$('thumbnail').value=c.thumbnail_url||'';$('published').checked=c.is_published;scrollTo({top:0,behavior:'smooth'})}
+  async function delCourse(id){if(!confirm('Delete this course?'))return;const r=await sb.from('courses').delete().eq('id',id);if(r.error)alert(r.error.message);else loadCourses()}
+  function clearForm(){$('courseId').value='';$('title').value='';$('description').value='';$('price').value='';$('category').value='';$('level').value='';$('duration').value='';$('thumbnail').value='';$('published').checked=false}
+  async function openLessons(id){selectedCourse=courses.find(c=>c.id===id);if(!selectedCourse)return;$('lessonPanel').style.display='block';$('selectedCourseLabel').textContent='Course: '+selectedCourse.title;await loadLessons();scrollTo({top:document.body.scrollHeight,behavior:'smooth'})}
+  async function loadLessons(){const r=await sb.from('lessons').select('*').eq('course_id',selectedCourse.id).order('lesson_order',{ascending:true});if(r.error){$('lessonList').innerHTML="<p class='notice'>Could not load lessons. Run setup-video-policies.sql in Supabase SQL Editor.</p>";return}lessons=r.data||[];renderLessons()}
+  function renderLessons(){$('lessonList').innerHTML=lessons.map((l,i)=>`<article class="lesson-admin"><div><b>${i+1}. ${esc(l.title)}</b><p>${esc(l.description||'')}</p><small>${l.video_url?'🎥 Video added':'⚠️ No video'} ${l.pdf_url?' • 📄 PDF':''}</small></div><div><button class="btn btn-outline" data-ledit="${l.id}">Edit</button> <button class="btn btn-outline" data-ldelete="${l.id}">Delete</button></div></article>`).join('')||'<p>No lessons yet.</p>'}
+  $('lessonList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.ledit)editLesson(b.dataset.ledit);if(b.dataset.ldelete)delLesson(b.dataset.ldelete)});
+  async function saveLesson(){if(!selectedCourse)return;const id=$('lessonId').value,obj={course_id:selectedCourse.id,title:$('lessonTitle').value.trim(),description:$('lessonDescription').value.trim(),video_url:$('videoUrl').value.trim()||null,pdf_url:$('pdfUrl').value.trim()||null,lesson_order:Number($('lessonOrder').value||1),is_free:$('freeLesson').checked};if(!obj.title){alert('Lesson title is required.');return}const r=id?await sb.from('lessons').update(obj).eq('id',id):await sb.from('lessons').insert(obj);if(r.error){alert(r.error.message);return}clearLesson();loadLessons()}
+  function editLesson(id){const l=lessons.find(x=>x.id===id);if(!l)return;$('lessonId').value=l.id;$('lessonTitle').value=l.title;$('lessonDescription').value=l.description||'';$('videoUrl').value=l.video_url||'';$('pdfUrl').value=l.pdf_url||'';$('lessonOrder').value=l.lesson_order||1;$('freeLesson').checked=!!l.is_free}
+  async function delLesson(id){if(!confirm('Delete this lesson?'))return;const r=await sb.from('lessons').delete().eq('id',id);if(r.error)alert(r.error.message);else loadLessons()}
+  function clearLesson(){$('lessonId').value='';$('lessonTitle').value='';$('lessonDescription').value='';$('videoUrl').value='';$('pdfUrl').value='';$('lessonOrder').value=lessons.length+1;$('freeLesson').checked=false}
+  $('saveCourseBtn').onclick=saveCourse;$('clearCourseBtn').onclick=clearForm;$('saveLessonBtn').onclick=saveLesson;$('closeLessonBtn').onclick=()=>{$('lessonPanel').style.display='none';selectedCourse=null};$('logoutBtn').onclick=async()=>{if(sb)await sb.auth.signOut();location.href='index.html'};
+  window.addEventListener('error',e=>{if(statusEl.style.display!=='none')setStatus('JavaScript error: '+e.message)});
+  start();
+})();
+</script></body></html>
