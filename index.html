@@ -1,44 +1,53 @@
 <!doctype html>
-<html lang="en"><head>
+<html lang="en">
+<head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>KeepLearning — Learn More, Achieve More</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-</head><body>
-<div class="offer">🎉 Special Offer: Get <b>40% OFF</b> on selected courses</div>
+</head>
+<body>
+<div class="offer">🎉 Learn practical skills and build your career with KeepLearning</div>
 <header class="header"><div class="container nav">
-<a class="logo" href="#"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Learn More, Achieve More</small></span></a>
+<a class="logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Learn More, Achieve More</small></span></a>
 <button class="menu-btn" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
 <nav><a href="#home">Home</a><a href="#courses">Courses</a><a href="#about">About Us</a><a href="#instructors">Instructors</a><a href="#faq">FAQ</a></nav>
 <div class="nav-actions"><input id="search" placeholder="Search courses..."><button class="btn btn-outline" onclick="showAuth('login')">Login</button><button class="btn btn-primary" onclick="showAuth('signup')">Sign Up</button></div>
 </div></header>
+
 <main>
 <section id="home" class="hero"><div class="container hero-grid"><div class="hero-copy">
-<span class="eyebrow">🚀 Learn skills that move your career forward</span><h1>Learn New <span>Skills.</span><br>Advance Your <span>Career.</span></h1>
+<span class="eyebrow">🚀 Learn skills that move your career forward</span>
+<h1>Learn New <span>Skills.</span><br>Advance Your <span>Career.</span></h1>
 <p>Learn practical, in-demand skills from expert instructors and build a better future with KeepLearning.</p>
-<div class="hero-actions"><a class="btn btn-primary btn-lg" href="#courses">Explore Courses →</a><button class="btn btn-outline btn-lg" onclick="alert('Course previews coming soon.')">Watch Video ▶</button></div>
+<div class="hero-actions"><a class="btn btn-primary btn-lg" href="#courses">Explore Courses →</a><button class="btn btn-outline btn-lg" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'})">View Courses ▶</button></div>
 <div class="trust"><span>👨🏻 👩🏻 👨🏽 👩🏽</span><div><b>★★★★★</b><small>Trusted by 10,000+ students</small></div></div>
 </div><div class="hero-art"><div class="blob"></div><div class="student">👩🏻‍🎓</div><div class="float-card c1">👥 <b>10,000+</b><small>Students Enrolled</small></div><div class="float-card c2">🎓 <b>250+</b><small>Expert Instructors</small></div><div class="float-card c3">📚 <b>500+</b><small>Courses Available</small></div></div></div></section>
 
-<section id="courses" class="section"><div class="container"><div class="section-head"><h2>Popular <span>Courses</span></h2><p>Courses are loaded from the KeepLearning database.</p></div><div id="courseGrid" class="course-grid"><div class="loading">Loading courses…</div></div></div></section>
+<section id="courses" class="section"><div class="container"><div class="section-head"><h2>Popular <span>Courses</span></h2><p>Choose a course and start learning with structured video lessons.</p></div><div id="courseGrid" class="course-grid"><div class="loading">Loading courses…</div></div></div></section>
 
 <section id="about" class="section light"><div class="container"><div class="section-head"><h2>Why Choose <span>KeepLearning?</span></h2></div><div class="benefits">
-<article>👨‍🏫<b>Expert Instructors</b><p>Learn from industry experts.</p></article><article>♾️<b>Lifetime Access</b><p>Learn whenever you want.</p></article><article>⏱️<b>Learn at Your Pace</b><p>Flexible learning experience.</p></article><article>📜<b>Certificates</b><p>Showcase your achievements.</p></article><article>🏷️<b>Affordable</b><p>Quality education at fair prices.</p></article><article>🎧<b>Support</b><p>Help when you need it.</p></article>
+<article>👨‍🏫<b>Expert Instructors</b><p>Learn from industry experts.</p></article><article>♾️<b>Lifetime Access</b><p>Learn whenever you want.</p></article><article>⏱️<b>Learn at Your Pace</b><p>Flexible learning experience.</p></article><article>📜<b>Certificates</b><p>Showcase your achievements.</p></article><article>🏷️<b>Affordable Courses</b><p>Quality education at fair prices.</p></article><article>🎧<b>Support</b><p>Help when you need it.</p></article>
 </div></div></section>
 
 <section id="instructors" class="section"><div class="container"><div class="section-head"><h2>Our Expert <span>Instructors</span></h2></div><div class="instructors">
 <article><div class="person">👨🏻‍💻</div><h3>Industry Experts</h3><p>Practical, career-focused teaching.</p></article><article><div class="person">👩🏻‍💻</div><h3>Experienced Mentors</h3><p>Guidance beyond recorded lessons.</p></article><article><div class="person">👨🏽‍💻</div><h3>Project Coaches</h3><p>Learn by building real projects.</p></article><article><div class="person">👩🏽‍💻</div><h3>Career Experts</h3><p>Skills aligned with job needs.</p></article>
-</div><div class="stats"><div><b>10,000+</b><small>Students</small></div><div><b>500+</b><small>Courses</small></div><div><b>250+</b><small>Instructors</small></div><div><b>4.8/5</b><small>Rating</small></div></div></div></section>
+</div></div></section>
 
 <section class="section testimonials"><div class="container"><div class="section-head"><h2>What Our <span>Students Say</span></h2></div><div class="testimonial-grid"><blockquote>“The courses are clear, practical and easy to follow.”<footer>— Aniket ★★★★★</footer></blockquote><blockquote>“Excellent platform with high-quality content.”<footer>— Sneha ★★★★★</footer></blockquote><blockquote>“Great value and helpful learning experience.”<footer>— Rahul ★★★★★</footer></blockquote></div></div></section>
 
 <section id="faq" class="section light"><div class="container faq-layout"><div><div class="section-head left"><h2>Frequently Asked <span>Questions</span></h2></div>
-<details><summary>How do I enroll?</summary><p>Create an account, choose a course and complete checkout.</p></details><details><summary>Will I get a certificate?</summary><p>Eligible courses provide certificates after completion.</p></details><details><summary>How long is access?</summary><p>Purchased course access is designed for lifetime learning.</p></details></div>
+<details><summary>How do I enroll?</summary><p>Create an account, choose a course and complete checkout. After successful payment, your lessons can be unlocked.</p></details>
+<details><summary>How are course videos organized?</summary><p>Each course contains modules and lessons. Each lesson can have a video URL and optional study material.</p></details>
+<details><summary>How long is access?</summary><p>Purchased course access is designed for lifetime learning.</p></details>
+</div>
 <div class="contact-card"><h3>Need help?</h3><p>We're here to support your learning journey.</p><button class="btn btn-white" onclick="showAuth('contact')">Contact Us →</button><div class="big-icon">🎧</div><p>+91 93702 52572</p></div></div></section>
 </main>
-<section class="newsletter"><div class="container"><div><h3>📨 Subscribe to our newsletter</h3><p>Get new courses and offers in your inbox.</p></div><form onsubmit="event.preventDefault();alert('Thanks for subscribing!')"><input required type="email" placeholder="Enter your email"><button class="btn btn-primary">Subscribe →</button></form></div></section>
-<footer class="footer"><div class="container footer-grid"><div><a class="logo footer-logo" href="#"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Learn More, Achieve More</small></span></a><p>Quality online learning for everyone.</p></div><div><h4>Quick Links</h4><a href="#home">Home</a><a href="#courses">Courses</a><a href="#about">About Us</a></div><div><h4>Useful Links</h4><a href="#">Privacy Policy</a><a href="#">Terms</a><a href="#faq">FAQs</a></div><div><h4>Support</h4><p>support@keeplearning.com</p><p>+91 93702 52572</p><p>Mon–Sat: 9 AM – 8 PM</p></div></div><div class="copyright">© 2026 KeepLearning. All rights reserved.</div></footer>
+
+<section class="newsletter"><div class="container"><div><h3>📨 Subscribe to our newsletter</h3><p>Get new courses and learning updates in your inbox.</p></div><form onsubmit="event.preventDefault();alert('Thanks for subscribing!')"><input required type="email" placeholder="Enter your email"><button class="btn btn-primary">Subscribe →</button></form></div></section>
+<footer class="footer"><div class="container footer-grid"><div><a class="logo footer-logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Learn More, Achieve More</small></span></a><p>Quality online learning for everyone.</p></div><div><h4>Quick Links</h4><a href="#home">Home</a><a href="#courses">Courses</a><a href="#about">About Us</a></div><div><h4>Useful Links</h4><a href="#">Privacy Policy</a><a href="#">Terms</a><a href="#faq">FAQs</a></div><div><h4>Support</h4><p>support@keeplearning.com</p><p>+91 93702 52572</p><p>Mon–Sat: 9 AM – 8 PM</p></div></div><div class="copyright">© 2026 KeepLearning. All rights reserved.</div></footer>
+
 <div id="modal" class="modal"><div class="modal-box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="script.js"></script>
 </body></html>
