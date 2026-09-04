@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KeepLearning Admin</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="offer">KeepLearning — Admin Dashboard</div><header class="header"><div class="container nav"><a class="logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Admin</small></span></a><button class="btn btn-outline" onclick="logout()">Logout</button></div></header>
+<main class="section"><div class="container" style="max-width:950px"><div id="status" class="loading">Checking admin access…</div>
+<div id="dashboard" style="display:none"><div class="section-head left"><h2>Manage <span>Courses</span></h2><p>Add, edit, publish or remove courses from the database.</p></div>
+<div class="pricing" style="grid-template-columns:1fr;max-width:none"><article><h3>Add / Edit Course</h3>
+<input id="courseId" type="hidden"><input id="title" placeholder="Course title"><input id="description" placeholder="Description"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input id="price" type="number" placeholder="Price ₹"><input id="category" placeholder="Category"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input id="level" placeholder="Level"><input id="duration" placeholder="Duration"></div>
+<label style="display:block;margin:10px 0;font-size:12px"><input id="published" type="checkbox"> Publish course</label><button class="btn btn-primary" onclick="saveCourse()">Save Course</button> <button class="btn btn-outline" onclick="clearForm()">Clear</button></article></div>
+<div id="courseList" style="margin-top:20px"></div></div></div></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+const URL="https://vowlzxhgjyzwzlhdgrnz.supabase.co";const KEY="sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY";const sb=supabase.createClient(URL,KEY);
+let courses=[];
+async function init(){if(KEY.startsWith("REPLACE_")){status("Add your anon key in admin.html first.");return}
+const {data:{user}}=await sb.auth.getUser();if(!user){location.href="index.html";return}
+const {data:p,error}=await sb.from("profiles").select("role").eq("id",user.id).single();if(error||p?.role!=="admin"){status("Access denied. This account is not an admin.");return}
+document.getElementById("status").style.display="none";document.getElementById("dashboard").style.display="block";load()}
+async function load(){let r=await sb.from("courses").select("*").order("created_at",{ascending:false});if(r.error){alert(r.error.message);return}courses=r.data||[];render()}
+function render(){document.getElementById("courseList").innerHTML=courses.map(c=>`<article class="instructor" style="margin:10px 0;justify-content:space-between"><div><h3>${esc(c.title)}</h3><p>₹${Number(c.price).toLocaleString("en-IN")} • ${esc(c.category||"")} • ${c.is_published?"Published":"Draft"}</p></div><div><button class="btn btn-outline" onclick="editCourse('${c.id}')">Edit</button> <button class="btn btn-outline" onclick="delCourse('${c.id}')">Delete</button></div></article>`).join("")||"<p>No courses yet.</p>"}
+async function saveCourse(){const id=courseId.value;const obj={title:title.value.trim(),description:description.value.trim(),price:Number(price.value||0),category:category.value.trim(),level:level.value.trim(),duration:duration.value.trim(),is_published:published.checked,updated_at:new Date().toISOString()};if(!obj.title||!obj.price){alert("Title and price are required.");return}let r=id?await sb.from("courses").update(obj).eq("id",id):await sb.from("courses").insert(obj);if(r.error){alert(r.error.message);return}clearForm();load()}
+function editCourse(id){let c=courses.find(x=>x.id===id);courseId.value=c.id;title.value=c.title;description.value=c.description||"";price.value=c.price;category.value=c.category||"";level.value=c.level||"";duration.value=c.duration||"";published.checked=c.is_published;scrollTo({top:0,behavior:"smooth"})}
+async function delCourse(id){if(!confirm("Delete this course?"))return;let r=await sb.from("courses").delete().eq("id",id);if(r.error)alert(r.error.message);else load()}
+function clearForm(){courseId.value="";title.value="";description.value="";price.value="";category.value="";level.value="";duration.value="";published.checked=false}
+async function logout(){await sb.auth.signOut();location.href="index.html"}function status(x){document.getElementById("status").textContent=x}function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}init();
+</script></body></html>
