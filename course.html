@@ -2,6 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Course — KeepLearning</title><link rel="stylesheet" href="style.css">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head><body>
 <header class="header"><div class="container nav">
 <a class="logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Course Player</small></span></a>
@@ -148,9 +149,77 @@ async function loadLessons(){
 }
 
 async function enroll(){
+  const btn=document.getElementById("enrollBtn");
   const {data:{user}}=await sb.auth.getUser();
   if(!user){showLogin();return}
-  alert("Payment gateway is not active yet. Once Razorpay is connected, successful payment will automatically create your enrollment and unlock all videos.");
+  if(enrolled)return;
+  if(!window.Razorpay){alert("Payment gateway could not load. Please refresh and try again.");return}
+
+  const oldText=btn?btn.textContent:"Buy / Unlock Course";
+  if(btn){btn.disabled=true;btn.textContent="Starting secure payment…"}
+
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    const accessToken=session?.access_token;
+    if(!accessToken) throw new Error("Your login session has expired. Please login again.");
+
+    const orderResp=await fetch("/api/create-order",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken},
+      body:JSON.stringify({courseId:id})
+    });
+    const order=await orderResp.json();
+    if(!orderResp.ok) throw new Error(order.error||"Could not start payment.");
+
+    const options={
+      key:order.keyId,
+      amount:order.amount,
+      currency:order.currency||"INR",
+      name:"KeepLearning",
+      description:order.courseTitle||course.title,
+      order_id:order.orderId,
+      prefill:{name:order.customer?.name||"",email:order.customer?.email||""},
+      theme:{color:"#2563eb"},
+      handler:async function(response){
+        if(btn){btn.disabled=true;btn.textContent="Verifying payment…"}
+        try{
+          const {data:{session:currentSession}}=await sb.auth.getSession();
+          const token=currentSession?.access_token;
+          const verifyResp=await fetch("/api/verify-payment",{
+            method:"POST",
+            headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},
+            body:JSON.stringify({
+              courseId:id,
+              razorpay_order_id:response.razorpay_order_id,
+              razorpay_payment_id:response.razorpay_payment_id,
+              razorpay_signature:response.razorpay_signature
+            })
+          });
+          const result=await verifyResp.json();
+          if(!verifyResp.ok) throw new Error(result.error||"Payment verification failed.");
+          alert("Payment successful! Your course is now unlocked.");
+          location.reload();
+        }catch(err){
+          console.error(err);
+          alert(err.message||"Payment verification failed. Please contact support if money was deducted.");
+          if(btn){btn.disabled=false;btn.textContent=oldText}
+        }
+      },
+      modal:{ondismiss:function(){if(btn){btn.disabled=false;btn.textContent=oldText}}}
+    };
+
+    const rzp=new Razorpay(options);
+    rzp.on("payment.failed",function(response){
+      console.error("Razorpay payment failed",response);
+      alert(response.error?.description||"Payment failed. Please try again.");
+      if(btn){btn.disabled=false;btn.textContent=oldText}
+    });
+    rzp.open();
+  }catch(err){
+    console.error(err);
+    alert(err.message||"Unable to start payment.");
+    if(btn){btn.disabled=false;btn.textContent=oldText}
+  }
 }
 
 function showLogin(){
