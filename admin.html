@@ -21,9 +21,7 @@ async function renderAdminAccount(user){
     const r=await sb.from('profiles').select('full_name').eq('id',user.id).maybeSingle();
     if(r.data?.full_name) name=r.data.full_name;
   }catch(e){}
-  host.innerHTML='<div class="account-user"><span class="account-avatar" aria-label="Account">
-<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M15 35c2.5-5 6-7.5 9-7.5s6.5 2.5 9 7.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="18" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M35 10l1.5 3.5L40 15l-3.5 1.5L35 20l-1.5-3.5L30 15l3.5-1.5L35 10z" fill="currentColor"/></svg>
-</span><span class="account-text"><b>'+esc(name)+'</b><small>'+esc(user.email||'')+'</small></span></div>';
+  host.innerHTML='<div class="account-user"><span class="account-avatar">👤</span><span class="account-text"><b>'+esc(name)+'</b><small>'+esc(user.email||'')+'</small></span></div>';
 }
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 async function withTimeout(promise,ms,label){return Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out.')),ms))]);}

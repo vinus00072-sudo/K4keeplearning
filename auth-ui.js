@@ -34,14 +34,14 @@
     const email=esc(user.email||"");
     host.innerHTML=`
       <div class="account-user" title="${email}">
-        <span class="account-avatar" aria-label="Account">
-          <svg viewBox="0 0 48 48" aria-hidden="true">
-            <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="2.5"/>
-            <path d="M15 35c2.5-5 6-7.5 9-7.5s6.5 2.5 9 7.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="24" cy="18" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/>
-            <path d="M35 10l1.5 3.5L40 15l-3.5 1.5L35 20l-1.5-3.5L30 15l3.5-1.5L35 10z" fill="currentColor" stroke="none"/>
-          </svg>
-        </span>
+        <span class="account-avatar" aria-label="KeepLearning account">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="15" fill="currentColor" opacity=".12"/>
+          <circle cx="16" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M7.5 25c1.9-4.1 5-6.2 8.5-6.2s6.6 2.1 8.5 6.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M22.5 7.5l1.3 2.1 2.4.5-1.7 1.7.3 2.4-2.3-1-2.2 1 .3-2.4-1.7-1.7 2.4-.5z" fill="currentColor"/>
+        </svg>
+      </span>
         <span class="account-text"><b>${safe}</b><small>${email}</small></span>
       </div>
       <button class="btn btn-outline account-logout" onclick="siteLogout()">Logout</button>`;

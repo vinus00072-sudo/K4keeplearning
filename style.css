@@ -42,20 +42,167 @@
 .account-text small{font-size:9px;color:#687386;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
 .account-logout{white-space:nowrap}
 @media(max-width:1000px){
-  .account-text{display:flex}
-  .account-user{padding:4px 7px;max-width:165px}
-  .account-text b{font-size:10px}
-  .account-text small{font-size:8px;max-width:105px}
+  .account-text{display:none}
+  .account-user{padding:4px 6px}
 }
 @media(max-width:700px){
   .nav-actions{margin-left:auto}
-  .account-area{gap:5px}
+  .account-area{gap:4px}
   .account-area .btn{padding:8px 9px;font-size:10px}
-  .account-user{border:1px solid #dce7f5;background:#f7fbff;padding:4px 6px;max-width:145px}
-  .account-text{display:flex}
-  .account-text b{font-size:10px;max-width:88px}
-  .account-text small{font-size:8px;max-width:88px}
-  .account-avatar{width:27px;height:27px;color:#2463c5;background:#edf5ff}
+  .account-user{border:0;background:transparent;padding:2px}
 }
 
-.account-avatar svg{width:18px;height:18px;display:block}
+/* Final responsive polish: header/account alignment + compact mobile hero */
+.account-avatar{color:#1755c8;width:34px;height:34px;border-radius:10px;background:linear-gradient(145deg,#eef5ff,#dfeeff);display:grid;place-items:center;flex:0 0 34px}
+.account-avatar svg{width:23px;height:23px;display:block}
+.account-user{min-height:42px}
+@media (max-width:1000px) and (min-width:701px){
+  .nav{gap:12px}
+  .logo{min-width:190px}
+  .nav-actions{gap:5px}
+  .account-user{max-width:170px}
+  .account-text{display:flex}
+  .account-text small{max-width:105px}
+}
+@media(max-width:700px){
+  .header{position:sticky;top:0}
+  .nav{
+    height:70px;
+    gap:8px;
+    padding:0 12px;
+    align-items:center;
+  }
+  .logo{
+    flex:0 1 205px;
+    min-width:0;
+    gap:6px;
+    overflow:hidden;
+  }
+  .logo-mark{font-size:24px;flex:0 0 auto}
+  .logo strong{font-size:14px;white-space:nowrap}
+  .logo small{font-size:7px;white-space:nowrap}
+  .menu-btn{
+    display:block;
+    order:2;
+    flex:0 0 38px;
+    width:38px;
+    height:40px;
+    margin:0;
+    padding:0;
+    font-size:25px;
+    line-height:1;
+  }
+  .nav-actions{
+    order:3;
+    flex:1 1 auto;
+    min-width:0;
+    margin-left:0;
+    gap:5px;
+    justify-content:flex-end;
+  }
+  .account-area{
+    min-width:0;
+    gap:5px;
+    justify-content:flex-end;
+  }
+  .account-user{
+    flex:0 1 150px;
+    max-width:150px;
+    min-width:92px;
+    padding:4px 6px;
+    border:1px solid #dfe6f0;
+    border-radius:10px;
+    background:#f8fbff;
+  }
+  .account-avatar{
+    width:30px;
+    height:30px;
+    flex-basis:30px;
+    border-radius:9px;
+  }
+  .account-avatar svg{width:20px;height:20px}
+  .account-text{display:flex}
+  .account-text b{font-size:10px}
+  .account-text small{font-size:8px;max-width:92px}
+  .account-logout{
+    flex:0 0 auto;
+    padding:8px 10px!important;
+    font-size:10px!important;
+  }
+  .nav nav.open{
+    top:70px;
+    padding:12px 18px;
+    gap:0;
+    box-shadow:0 12px 25px rgba(20,40,95,.10);
+    border-top:1px solid #eef1f7;
+  }
+  .nav nav.open a{
+    padding:11px 2px;
+    font-size:14px;
+    border-bottom:1px solid #f0f2f6;
+  }
+
+  .hero-grid{
+    min-height:0;
+    padding:18px 0 0;
+  }
+  .hero-copy{padding:12px 0 0}
+  .eyebrow{font-size:12px}
+  .hero h1{
+    font-size:34px;
+    line-height:1.08;
+    margin:11px 0 13px;
+  }
+  .hero p{
+    font-size:15px;
+    line-height:1.55;
+    margin:0;
+  }
+  .hero-actions{
+    gap:9px;
+    margin:18px 0;
+  }
+  .hero-actions .btn{
+    padding:11px 14px;
+    font-size:12px;
+  }
+  .trust{gap:9px}
+  .trust>span{font-size:20px}
+  .trust b{font-size:16px}
+  .trust small{font-size:10px}
+  .hero-art{
+    height:270px;
+    margin-top:4px;
+    overflow:visible;
+  }
+  .blob{width:220px;height:220px}
+  .student{font-size:112px}
+  .float-card{
+    padding:9px 12px;
+    border-radius:9px;
+    grid-template-columns:24px auto;
+    column-gap:6px;
+    font-size:10px;
+  }
+  .float-card small{font-size:9px}
+  .c1{right:2px;top:5px;transform:scale(.68)}
+  .c2{right:4px;top:91px;transform:scale(.68)}
+  .c3{right:2px;top:177px;transform:scale(.68)}
+  .section{padding:34px 0}
+  .section-head{margin-bottom:20px}
+  .section-head h2{font-size:23px}
+  .section-head p{font-size:11px}
+}
+@media(max-width:420px){
+  .nav{padding:0 8px;gap:5px}
+  .logo{flex-basis:170px}
+  .logo strong{font-size:13px}
+  .logo small{font-size:6.5px}
+  .menu-btn{flex-basis:34px;width:34px}
+  .account-user{flex-basis:120px;max-width:120px}
+  .account-text small{max-width:68px}
+  .account-logout{padding:8px 8px!important}
+  .hero h1{font-size:31px}
+  .hero p{font-size:14px}
+  .hero-art{height:250px}
+}

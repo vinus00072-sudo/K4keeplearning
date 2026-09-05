@@ -37,3 +37,10 @@ The existing `enrollments` table should have the unique `(user_id, course_id)` c
 - Course access is rechecked after login/logout.
 - The course page no longer shows a duplicate lower Buy/Unlock button.
 - No mobile number was added to the KeepLearning UI.
+
+
+## Responsive header polish
+- Mobile header no longer lets the logo, menu icon, account name, and Logout button overlap.
+- Logged-in account uses a custom KeepLearning-style SVG icon.
+- User name remains visible on mobile with a compact email line.
+- Mobile hero typography and illustration spacing were reduced to avoid excessive vertical scrolling.
