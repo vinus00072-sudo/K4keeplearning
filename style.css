@@ -264,3 +264,78 @@
 /* Course PDF: visible to everyone, enabled only after verified payment/enrollment */
 .course-pdf-btn:disabled{opacity:.52;cursor:not-allowed;filter:grayscale(.15)}
 .course-pdf-btn:disabled:hover{transform:none}
+
+/* Final responsive course-page polish */
+.course-pdf-btn[aria-disabled="true"]{
+  opacity:.52;
+  cursor:pointer;
+  filter:grayscale(.15);
+}
+.course-pdf-btn[aria-disabled="true"]:hover{
+  transform:none;
+}
+@media(max-width:700px){
+  .course-page{padding:18px 0 45px}
+  .course-hero{
+    padding:20px 18px;
+    border-radius:15px;
+    gap:18px;
+  }
+  .course-hero-text{min-width:0}
+  .course-hero h1{
+    font-size:31px;
+    line-height:1.15;
+    margin:10px 0 14px;
+    overflow-wrap:anywhere;
+  }
+  .course-hero-text>p{
+    font-size:14px;
+    line-height:1.65;
+    margin-bottom:8px;
+  }
+  .course-meta{
+    gap:7px 12px;
+    margin:14px 0;
+    font-size:11px;
+  }
+  .course-detail-labels{
+    gap:6px;
+    margin:9px 0 3px;
+  }
+  .course-detail-labels span{
+    font-size:9px;
+    padding:5px 7px;
+  }
+  .course-price{
+    font-size:27px;
+    margin:16px 0;
+  }
+  .course-price small{font-size:10px}
+  .course-actions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:9px;
+  }
+  .course-actions .btn{
+    width:100%;
+    min-height:48px;
+    padding:11px 12px;
+    font-size:13px;
+  }
+  .course-pdf-btn{
+    white-space:normal;
+    line-height:1.35;
+  }
+  .course-hero-icon{
+    min-height:155px;
+    max-height:210px;
+    border-radius:13px;
+  }
+}
+@media(max-width:420px){
+  .course-hero{padding:18px 15px}
+  .course-hero h1{font-size:29px}
+  .course-hero-text>p{font-size:13px}
+  .course-price{font-size:25px}
+  .course-actions .btn{font-size:12px}
+}

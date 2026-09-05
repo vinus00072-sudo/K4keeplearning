@@ -21,7 +21,7 @@ const SUPABASE_URL="https://vowlzxhgjyzwzlhdgrnz.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const id=new URLSearchParams(location.search).get("id");
-let course=null, lessons=[], enrolled=false;
+let course=null, lessons=[], enrolled=false, pendingPdfPayment=false;
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 
@@ -56,7 +56,7 @@ async function init(){
       <div class="course-actions">
         <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">कोर्स खरेदी करून अनलॉक करा</button>
         <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">↗ कोर्स शेअर करा</button>
-        <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" disabled>📘 संपूर्ण कोर्स PDF डाउनलोड करा</button>
+        <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" aria-disabled="true" onclick="handlePdfButtonClick()">📘 संपूर्ण कोर्स PDF डाउनलोड करा</button>
       </div>
     </div>
     <div class="course-hero-icon">${course.thumbnail_url?`<img src="${esc(course.thumbnail_url)}" alt="">`:"💻"}</div>`;
@@ -73,9 +73,10 @@ async function loadAccess(){
     const pdfBtn=document.getElementById("coursePdfBtn");
     if(pdfBtn){
       pdfBtn.style.display="inline-flex";
-      pdfBtn.disabled=true;
-      pdfBtn.onclick=null;
-      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
+      pdfBtn.disabled=false;
+      pdfBtn.setAttribute("aria-disabled","true");
+      pdfBtn.onclick=handlePdfButtonClick;
+      pdfBtn.title="पेमेंट पूर्ण करण्यासाठी येथे क्लिक करा";
     }
     area.innerHTML=`
       <div class="section-head left"><h2>Course <span>Content</span></h2></div>
@@ -107,9 +108,10 @@ async function loadAccess(){
     const pdfBtn=document.getElementById("coursePdfBtn");
     if(pdfBtn){
       pdfBtn.style.display="inline-flex";
-      pdfBtn.disabled=true;
-      pdfBtn.onclick=null;
-      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
+      pdfBtn.disabled=false;
+      pdfBtn.setAttribute("aria-disabled","true");
+      pdfBtn.onclick=handlePdfButtonClick;
+      pdfBtn.title="पेमेंट पूर्ण करण्यासाठी येथे क्लिक करा";
     }
     area.innerHTML=`
       <div class="section-head left"><h2>Course <span>Content</span></h2></div>
@@ -126,19 +128,27 @@ async function loadAccess(){
   const pdfBtn=document.getElementById("coursePdfBtn");
   if(pdfBtn){
     pdfBtn.style.display="inline-flex";
-    pdfBtn.disabled=true;
-    pdfBtn.onclick=null;
-    pdfBtn.title="PDF उपलब्ध असल्यास डाउनलोड करता येईल";
+    pdfBtn.disabled=false;
+    pdfBtn.removeAttribute("aria-disabled");
+    pdfBtn.title="संपूर्ण कोर्स PDF डाउनलोड करा";
     try{
       const {data:pdfCourse}=await sb.from("courses").select("pdf_url").eq("id",id).maybeSingle();
       if(pdfCourse?.pdf_url){
         pdfBtn.disabled=false;
+        pdfBtn.removeAttribute("aria-disabled");
         pdfBtn.title="संपूर्ण कोर्स PDF डाउनलोड करा";
         pdfBtn.onclick=()=>window.open(pdfCourse.pdf_url,"_blank","noopener");
+      }else{
+        pdfBtn.disabled=false;
+        pdfBtn.setAttribute("aria-disabled","true");
+        pdfBtn.title="PDF उपलब्ध नाही";
+        pdfBtn.onclick=()=>alert("या कोर्ससाठी PDF सध्या उपलब्ध नाही.");
       }
     }catch(e){
-      pdfBtn.disabled=true;
-      pdfBtn.onclick=null;
+      pdfBtn.disabled=false;
+      pdfBtn.setAttribute("aria-disabled","true");
+      pdfBtn.title="PDF उपलब्ध नाही";
+      pdfBtn.onclick=()=>alert("PDF तपासता आला नाही. कृपया पुन्हा प्रयत्न करा.");
     }
   }
   await loadLessons();
@@ -182,6 +192,18 @@ async function loadLessons(){
           </div>
         </article>`).join("")}
     </div>`;
+}
+
+function handlePdfButtonClick(){
+  if(enrolled){
+    const pdfBtn=document.getElementById("coursePdfBtn");
+    if(pdfBtn?.getAttribute("aria-disabled")==="true"){
+      alert("या कोर्ससाठी PDF सध्या उपलब्ध नाही.");
+    }
+    return;
+  }
+  pendingPdfPayment=true;
+  enroll();
 }
 
 async function enroll(){
@@ -356,8 +378,11 @@ async function doLogin(){
   });
   if(error){alert(error.message);return}
   closeModal();
+  const continueToPayment=pendingPdfPayment;
+  pendingPdfPayment=false;
   await loadAccess();
   if(typeof window.refreshKeepLearningAuth==="function") await window.refreshKeepLearningAuth();
+  if(continueToPayment && !enrolled) await enroll();
 }
 
 function playVideo(url,title){
@@ -385,6 +410,7 @@ document.getElementById("shareModal").addEventListener("click",e=>{if(e.target.i
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeShareMenu()});
 window.onKeepLearningLogout=async function(){
   enrolled=false;
+  pendingPdfPayment=false;
   const btn=document.getElementById("enrollBtn");
   if(btn){btn.disabled=false;btn.textContent="कोर्स खरेदी करा / अनलॉक करा";}
   await loadAccess();
