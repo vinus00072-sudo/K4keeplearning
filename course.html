@@ -54,9 +54,9 @@ async function init(){
       </div>
       <div class="course-price">${priceHtml} <small>/course</small></div>
       <div class="course-actions">
-        <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">Enroll / Unlock Course</button>
-        <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">↗ Share Course</button>
-        <a id="coursePdfBtn" class="btn btn-outline btn-lg course-pdf-btn" href="#" target="_blank" rel="noopener" download style="display:none">⬇ Download Course PDF</a>
+        <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">कोर्स खरेदी करून अनलॉक करा</button>
+        <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">↗ कोर्स शेअर करा</button>
+        <a id="coursePdfBtn" class="btn btn-outline btn-lg course-pdf-btn" href="#" target="_blank" rel="noopener" download style="display:none">📘 संपूर्ण कोर्स PDF डाउनलोड करा</a>
       </div>
     </div>
     <div class="course-hero-icon">${course.thumbnail_url?`<img src="${esc(course.thumbnail_url)}" alt="">`:"💻"}</div>`;
@@ -73,9 +73,9 @@ async function loadAccess(){
     area.innerHTML=`
       <div class="section-head left"><h2>Course <span>Content</span></h2></div>
       <div class="empty-state">
-        <h3>🔒 Videos are locked</h3>
-        <p>Login and complete the course purchase to unlock all lessons.</p>
-        <button class="btn btn-primary" onclick="showLogin()">Login to Continue</button>
+        <h3>🔒 कोर्सचे व्हिडिओ लॉक आहेत</h3>
+        <p>सर्व व्हिडिओ आणि संपूर्ण कोर्स PDF मिळवण्यासाठी लॉगिन करून कोर्सची खरेदी पूर्ण करा.</p>
+        <button class="btn btn-primary" onclick="showLogin()">पुढे जाण्यासाठी लॉगिन करा</button>
       </div>`;
     return;
   }
@@ -102,14 +102,14 @@ async function loadAccess(){
     area.innerHTML=`
       <div class="section-head left"><h2>Course <span>Content</span></h2></div>
       <div class="empty-state">
-        <h3>🔒 Course Content is Locked</h3>
+        <h3>🔒 कोर्सचा अभ्यासक्रम is Locked</h3>
         <p>Purchase this course to unlock all videos and study materials.</p>
         
       </div>`;
     return;
   }
 
-  if(btn) btn.textContent="✓ Course Unlocked";
+  if(btn) btn.textContent="✓ ✓ कोर्स अनलॉक झाला";
   if(btn) btn.disabled=true;
   const pdfBtn=document.getElementById("coursePdfBtn");
   if(pdfBtn){
@@ -323,7 +323,7 @@ function showShareToast(message){
 
 function showLogin(){
   document.getElementById("modalContent").innerHTML=`
-    <h2>Login to Continue</h2>
+    <h2>पुढे जाण्यासाठी लॉगिन करा</h2>
     <p>Please login before purchasing this course.</p>
     <input id="email" type="email" placeholder="Email address">
     <input id="password" type="password" placeholder="Password">

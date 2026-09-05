@@ -251,3 +251,5 @@
 
 .course-pdf-btn{white-space:nowrap}
 @media(max-width:700px){.course-pdf-btn{font-size:11px;padding:10px 12px}}
+
+.course-pdf-btn{font-weight:800;border-width:2px;min-width:250px}.course-pdf-btn:hover{transform:translateY(-1px)}@media(max-width:700px){.course-pdf-btn{width:100%;min-width:0}}
