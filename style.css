@@ -334,11 +334,21 @@
   line-height:1.6;
 }
 
-/* Logged-in account: show name only, up to 7 words */
-.account-area .user-name,
-.account-area .account-name,
-.account-area [class*="user-name"]{
-  white-space: normal;
-  overflow-wrap: anywhere;
-  max-width: 24rem;
+
+/* Final logged-in header: name only, no email, maximum 7 words */
+.account-text small{display:none!important;}
+.account-text b{
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  display:block;
+  max-width:140px;
+  line-height:1.15;
+}
+@media (max-width:600px){
+  .account-text{display:flex!important;}
+  .account-text b{font-size:11px!important;max-width:105px;}
+  .course-nav .account-user{max-width:125px!important;min-width:0!important;padding:4px 6px!important;background:#f8fbff!important;border:1px solid #e2e6ef!important;}
+  .course-nav .account-user .account-text{display:flex!important;}
+  .course-nav .account-text b{font-size:10px!important;max-width:82px!important;}
 }

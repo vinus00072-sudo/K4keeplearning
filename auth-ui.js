@@ -10,15 +10,7 @@
     return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
   }
 
-  
-function getNameOnly(displayName) {
-  const raw = String(displayName || "").trim();
-  if (!raw) return "";
-  const words = raw.split(/\s+/).filter(Boolean);
-  return words.length > 7 ? words.slice(0, 7).join(" ") + "…" : words.join(" ");
-}
-
-async function getDisplayName(user){
+  async function getDisplayName(user){
     if(!user) return "";
     try{
       const {data}=await authClient.from("profiles").select("full_name").eq("id",user.id).maybeSingle();
@@ -38,10 +30,9 @@ async function getDisplayName(user){
       return;
     }
     const name=await getDisplayName(user);
-    const safe=esc(name);
-    const email=esc(user.email||"");
+    const safe=esc(getNameOnly(name));
     host.innerHTML=`
-      <div class="account-user" title="${email}">
+      <div class="account-user" aria-label="Logged in user">
         <span class="account-avatar" aria-label="KeepLearning account">
         <svg viewBox="0 0 32 32" aria-hidden="true">
           <circle cx="16" cy="16" r="15" fill="currentColor" opacity=".12"/>
@@ -50,7 +41,7 @@ async function getDisplayName(user){
           <path d="M22.5 7.5l1.3 2.1 2.4.5-1.7 1.7.3 2.4-2.3-1-2.2 1 .3-2.4-1.7-1.7 2.4-.5z" fill="currentColor"/>
         </svg>
       </span>
-        <span class="account-text"><b>${safe}</b><small>${email}</small></span>
+        <span class="account-text"><b>${safe}</b></span>
       </div>
       <button class="btn btn-outline account-logout" onclick="siteLogout()">Logout</button>`;
   }
