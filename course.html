@@ -14,6 +14,7 @@
 <div id="lessonArea" class="lesson-area"></div>
 </div></main>
 <div id="modal" class="modal"><div class="modal-box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+<div id="shareModal" class="modal" aria-hidden="true"><div class="modal-box share-box"><button class="close" onclick="closeShareMenu()" aria-label="Close share options">×</button><div id="shareContent"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL="https://vowlzxhgjyzwzlhdgrnz.supabase.co";
@@ -52,7 +53,10 @@ async function init(){
         <span>📚 ${esc(course.level||"All levels")}</span>
       </div>
       <div class="course-price">${priceHtml} <small>/course</small></div>
-      <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">Enroll / Unlock Course</button>
+      <div class="course-actions">
+        <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">Enroll / Unlock Course</button>
+        <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">↗ Share Course</button>
+      </div>
     </div>
     <div class="course-hero-icon">${course.thumbnail_url?`<img src="${esc(course.thumbnail_url)}" alt="">`:"💻"}</div>`;
 
@@ -222,6 +226,87 @@ async function enroll(){
   }
 }
 
+function getCourseShareData(){
+  const shareUrl=new URL("course.html",window.location.href);
+  shareUrl.searchParams.set("id",id);
+  return {
+    url:shareUrl.href,
+    title:course?.title ? course.title+" — KeepLearning" : "KeepLearning Course",
+    text:course?.title ? "Check out this course on KeepLearning: "+course.title : "Check out this course on KeepLearning"
+  };
+}
+
+async function nativeShare(){
+  const data=getCourseShareData();
+  if(!navigator.share){openShareMenu();return}
+  try{
+    await navigator.share(data);
+  }catch(err){
+    if(err?.name!="AbortError") console.warn("Share failed",err);
+  }
+}
+
+async function copyCourseLink(){
+  const data=getCourseShareData();
+  try{
+    if(navigator.clipboard?.writeText){
+      await navigator.clipboard.writeText(data.url);
+    }else{
+      const ta=document.createElement("textarea");
+      ta.value=data.url; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
+    }
+    showShareToast("Course link copied");
+  }catch(err){
+    console.error(err); showShareToast("Could not copy link. Please copy the URL from your browser.");
+  }
+}
+
+function shareExternal(kind){
+  const d=getCourseShareData();
+  const u=encodeURIComponent(d.url), text=encodeURIComponent(d.text);
+  const urls={
+    whatsapp:"https://wa.me/?text="+encodeURIComponent(d.text+" "+d.url),
+    telegram:"https://t.me/share/url?url="+u+"&text="+text,
+    facebook:"https://www.facebook.com/sharer/sharer.php?u="+u,
+    x:"https://twitter.com/intent/tweet?url="+u+"&text="+text,
+    email:"mailto:?subject="+encodeURIComponent(d.title)+"&body="+encodeURIComponent(d.text+"\n\n"+d.url)
+  };
+  const target=urls[kind];
+  if(!target)return;
+  if(kind==="email"){window.location.href=target;return}
+  window.open(target,"_blank","noopener,noreferrer,width=720,height=640");
+}
+
+function openShareMenu(){
+  const d=getCourseShareData();
+  const native=navigator.share ? `<button class="share-option share-native" onclick="nativeShare()"><span>↗</span><b>More / Phone Share</b><small>WhatsApp, Nearby Share and other apps</small></button>` : "";
+  document.getElementById("shareContent").innerHTML=`
+    <div class="share-heading"><div class="share-icon">↗</div><div><h2>Share this course</h2><p>Invite someone to learn with you.</p></div></div>
+    ${native}
+    <div class="share-grid">
+      <button class="share-option" onclick="shareExternal('whatsapp')"><span>WA</span><b>WhatsApp</b><small>Share with a contact</small></button>
+      <button class="share-option" onclick="shareExternal('telegram')"><span>TG</span><b>Telegram</b><small>Send to a chat</small></button>
+      <button class="share-option" onclick="shareExternal('facebook')"><span>f</span><b>Facebook</b><small>Share on your profile</small></button>
+      <button class="share-option" onclick="shareExternal('x')"><span>𝕏</span><b>X</b><small>Post the course</small></button>
+      <button class="share-option" onclick="shareExternal('email')"><span>✉</span><b>Email</b><small>Send course details</small></button>
+      <button class="share-option" onclick="copyCourseLink()"><span>⛓</span><b>Copy Link</b><small>Copy course URL</small></button>
+    </div>
+    <div class="share-url"><small>Course link</small><div>${esc(d.url)}</div></div>`;
+  const m=document.getElementById("shareModal");
+  m.classList.add("show");m.setAttribute("aria-hidden","false");
+}
+function closeShareMenu(){
+  const m=document.getElementById("shareModal");
+  m.classList.remove("show");m.setAttribute("aria-hidden","true");
+}
+function showShareToast(message){
+  let t=document.getElementById("shareToast");
+  if(!t){t=document.createElement("div");t.id="shareToast";document.body.appendChild(t)}
+  t.textContent=message;t.classList.add("show");
+  clearTimeout(window.__shareToastTimer);window.__shareToastTimer=setTimeout(()=>t.classList.remove("show"),2200);
+}
+
 function showLogin(){
   document.getElementById("modalContent").innerHTML=`
     <h2>Login to Continue</h2>
@@ -264,6 +349,8 @@ function playVideo(url,title){
 
 function closeModal(){document.getElementById("modal").classList.remove("show")}
 document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+document.getElementById("shareModal").addEventListener("click",e=>{if(e.target.id==="shareModal")closeShareMenu()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeShareMenu()});
 window.onKeepLearningLogout=async function(){
   enrolled=false;
   const btn=document.getElementById("enrollBtn");
