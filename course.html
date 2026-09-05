@@ -4,10 +4,23 @@
 <title>Course — KeepLearning</title><link rel="stylesheet" href="style.css">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head><body>
-<header class="header"><div class="container nav">
-<a class="logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Course Player</small></span></a>
-<a class="btn btn-outline" href="index.html#courses">← सर्व कोर्स</a><div id="accountArea" class="account-area"><button class="btn btn-outline" onclick="openSiteLogin()">Login</button></div>
-</div></header>
+<header class="header course-header">
+  <div class="container course-nav">
+    <a class="logo" href="index.html" aria-label="KeepLearning Home">
+      <span class="logo-mark">📖</span>
+      <span><strong>Keep<span>Learning</span></strong><small>Course Player</small></span>
+    </a>
+    <div class="course-nav-actions">
+      <a class="back-courses-btn" href="index.html#courses" aria-label="सर्व कोर्स">
+        <span class="back-arrow">←</span><span>सर्व कोर्स</span>
+      </a>
+      <div id="accountArea" class="account-area">
+        <button class="btn btn-outline" onclick="openSiteLogin()">Login</button>
+        <button class="btn btn-primary" onclick="openSiteSignup()">Sign Up</button>
+      </div>
+    </div>
+  </div>
+</header>
 <main class="course-page">
 <div class="container">
 <div id="courseHero" class="course-hero"><div class="loading">Loading course…</div></div>
@@ -21,18 +34,18 @@ const SUPABASE_URL="https://vowlzxhgjyzwzlhdgrnz.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const id=new URLSearchParams(location.search).get("id");
-let course=null, lessons=[], enrolled=false, pendingPdfPayment=false;
+let course=null, lessons=[], enrolled=false;
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 
 async function init(){
   if(!id){
-    document.getElementById("courseHero").innerHTML="<p>Course not found.</p>";
+    document.getElementById("courseHero").innerHTML="<p>कोर्स सापडला नाही.</p>";
     return;
   }
   const {data,error}=await sb.from("courses").select("*").eq("id",id).single();
   if(error||!data){
-    document.getElementById("courseHero").innerHTML="<p>Course not found.</p>";
+    document.getElementById("courseHero").innerHTML="<p>कोर्स सापडला नाही.</p>";
     return;
   }
   course=data;
@@ -56,7 +69,7 @@ async function init(){
       <div class="course-actions">
         <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">कोर्स खरेदी करून अनलॉक करा</button>
         <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">↗ कोर्स शेअर करा</button>
-        <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" aria-disabled="true" onclick="handlePdfButtonClick()">📘 संपूर्ण कोर्स PDF डाउनलोड करा</button>
+        <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" disabled>📘 संपूर्ण कोर्स PDF डाउनलोड करा</button>
       </div>
     </div>
     <div class="course-hero-icon">${course.thumbnail_url?`<img src="${esc(course.thumbnail_url)}" alt="">`:"💻"}</div>`;
@@ -73,13 +86,12 @@ async function loadAccess(){
     const pdfBtn=document.getElementById("coursePdfBtn");
     if(pdfBtn){
       pdfBtn.style.display="inline-flex";
-      pdfBtn.disabled=false;
-      pdfBtn.setAttribute("aria-disabled","true");
-      pdfBtn.onclick=handlePdfButtonClick;
-      pdfBtn.title="पेमेंट पूर्ण करण्यासाठी येथे क्लिक करा";
+      pdfBtn.disabled=true;
+      pdfBtn.onclick=null;
+      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
     }
     area.innerHTML=`
-      <div class="section-head left"><h2>Course <span>Content</span></h2></div>
+      <div class="section-head left"><h2>कोर्सची <span>सामग्री</span></h2></div>
       <div class="empty-state">
         <h3>🔒 कोर्सचे व्हिडिओ लॉक आहेत</h3>
         <p>सर्व व्हिडिओ धडे आणि संपूर्ण अभ्यास PDF मिळवण्यासाठी लॉगिन करून कोर्सची खरेदी पूर्ण करा.</p>
@@ -108,16 +120,15 @@ async function loadAccess(){
     const pdfBtn=document.getElementById("coursePdfBtn");
     if(pdfBtn){
       pdfBtn.style.display="inline-flex";
-      pdfBtn.disabled=false;
-      pdfBtn.setAttribute("aria-disabled","true");
-      pdfBtn.onclick=handlePdfButtonClick;
-      pdfBtn.title="पेमेंट पूर्ण करण्यासाठी येथे क्लिक करा";
+      pdfBtn.disabled=true;
+      pdfBtn.onclick=null;
+      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
     }
     area.innerHTML=`
-      <div class="section-head left"><h2>Course <span>Content</span></h2></div>
+      <div class="section-head left"><h2>कोर्सची <span>सामग्री</span></h2></div>
       <div class="empty-state">
         <h3>🔒 कोर्सचा अभ्यासक्रम is Locked</h3>
-        <p>Purchase this course to unlock all videos and study materials.</p>
+        <p>सर्व व्हिडिओ धडे आणि अभ्यास साहित्य पाहण्यासाठी कोर्सची खरेदी पूर्ण करा.</p>
         
       </div>`;
     return;
@@ -128,27 +139,19 @@ async function loadAccess(){
   const pdfBtn=document.getElementById("coursePdfBtn");
   if(pdfBtn){
     pdfBtn.style.display="inline-flex";
-    pdfBtn.disabled=false;
-    pdfBtn.removeAttribute("aria-disabled");
-    pdfBtn.title="संपूर्ण कोर्स PDF डाउनलोड करा";
+    pdfBtn.disabled=true;
+    pdfBtn.onclick=null;
+    pdfBtn.title="PDF उपलब्ध असल्यास डाउनलोड करता येईल";
     try{
       const {data:pdfCourse}=await sb.from("courses").select("pdf_url").eq("id",id).maybeSingle();
       if(pdfCourse?.pdf_url){
         pdfBtn.disabled=false;
-        pdfBtn.removeAttribute("aria-disabled");
         pdfBtn.title="संपूर्ण कोर्स PDF डाउनलोड करा";
         pdfBtn.onclick=()=>window.open(pdfCourse.pdf_url,"_blank","noopener");
-      }else{
-        pdfBtn.disabled=false;
-        pdfBtn.setAttribute("aria-disabled","true");
-        pdfBtn.title="PDF उपलब्ध नाही";
-        pdfBtn.onclick=()=>alert("या कोर्ससाठी PDF सध्या उपलब्ध नाही.");
       }
     }catch(e){
-      pdfBtn.disabled=false;
-      pdfBtn.setAttribute("aria-disabled","true");
-      pdfBtn.title="PDF उपलब्ध नाही";
-      pdfBtn.onclick=()=>alert("PDF तपासता आला नाही. कृपया पुन्हा प्रयत्न करा.");
+      pdfBtn.disabled=true;
+      pdfBtn.onclick=null;
     }
   }
   await loadLessons();
@@ -174,8 +177,8 @@ async function loadLessons(){
 
   area.innerHTML=`
     <div class="section-head left">
-      <h2>Course <span>Content</span></h2>
-      <p>${lessons.length} lesson(s) — all unlocked</p>
+      <h2>कोर्सची <span>सामग्री</span></h2>
+      <p>${lessons.length} धडे — सर्व अनलॉक आहेत</p>
     </div>
     <div class="lessons">
       ${lessons.map((l,i)=>`
@@ -187,23 +190,11 @@ async function loadLessons(){
           </div>
           <div class="lesson-action">
             ${l.video_url
-              ? `<button class="btn btn-primary" onclick="playVideo(${JSON.stringify(l.video_url)},${JSON.stringify(l.title)})">▶ Watch Video</button>`
-              : "<span class='muted'>Video not added</span>"}
+              ? `<button class="btn btn-primary" onclick="playVideo(${JSON.stringify(l.video_url)},${JSON.stringify(l.title)})">▶ व्हिडिओ पहा</button>`
+              : "<span class='muted'>व्हिडिओ जोडलेला नाही</span>"}
           </div>
         </article>`).join("")}
     </div>`;
-}
-
-function handlePdfButtonClick(){
-  if(enrolled){
-    const pdfBtn=document.getElementById("coursePdfBtn");
-    if(pdfBtn?.getAttribute("aria-disabled")==="true"){
-      alert("या कोर्ससाठी PDF सध्या उपलब्ध नाही.");
-    }
-    return;
-  }
-  pendingPdfPayment=true;
-  enroll();
 }
 
 async function enroll(){
@@ -378,11 +369,8 @@ async function doLogin(){
   });
   if(error){alert(error.message);return}
   closeModal();
-  const continueToPayment=pendingPdfPayment;
-  pendingPdfPayment=false;
   await loadAccess();
   if(typeof window.refreshKeepLearningAuth==="function") await window.refreshKeepLearningAuth();
-  if(continueToPayment && !enrolled) await enroll();
 }
 
 function playVideo(url,title){
@@ -410,7 +398,6 @@ document.getElementById("shareModal").addEventListener("click",e=>{if(e.target.i
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeShareMenu()});
 window.onKeepLearningLogout=async function(){
   enrolled=false;
-  pendingPdfPayment=false;
   const btn=document.getElementById("enrollBtn");
   if(btn){btn.disabled=false;btn.textContent="कोर्स खरेदी करा / अनलॉक करा";}
   await loadAccess();
