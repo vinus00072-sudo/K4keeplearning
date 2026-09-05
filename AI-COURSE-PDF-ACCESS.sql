@@ -1,0 +1,5 @@
+-- PDF payment gate
+-- The website shows the complete-course PDF button only after a matching
+-- public.enrollments row is found for the logged-in user.
+-- For true protection, keep the PDF in a PRIVATE Supabase Storage bucket
+-- and serve a short-lived signed URL after verifying enrollment server-side.

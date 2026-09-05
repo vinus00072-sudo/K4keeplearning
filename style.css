@@ -257,3 +257,10 @@
 .course-detail-labels{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 4px}
 .course-detail-labels span{font-size:11px;color:#24436f;background:#f1f6ff;border:1px solid #dce8fb;border-radius:999px;padding:6px 9px}
 @media(max-width:700px){.course-detail-labels span{font-size:9px;padding:5px 7px}}
+
+.course-pdf-btn{white-space:nowrap}
+@media(max-width:700px){.course-pdf-btn{width:100%;font-size:12px}}
+
+/* Course PDF: visible to everyone, enabled only after verified payment/enrollment */
+.course-pdf-btn:disabled{opacity:.52;cursor:not-allowed;filter:grayscale(.15)}
+.course-pdf-btn:disabled:hover{transform:none}

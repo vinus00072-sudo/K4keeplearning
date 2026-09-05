@@ -56,7 +56,7 @@ async function init(){
       <div class="course-actions">
         <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">कोर्स खरेदी करून अनलॉक करा</button>
         <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">↗ कोर्स शेअर करा</button>
-        <a id="coursePdfBtn" class="btn btn-outline btn-lg course-pdf-btn" href="#" target="_blank" rel="noopener" download style="display:none">📘 संपूर्ण कोर्स PDF डाउनलोड करा</a>
+        <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" disabled>📘 संपूर्ण कोर्स PDF डाउनलोड करा</button>
       </div>
     </div>
     <div class="course-hero-icon">${course.thumbnail_url?`<img src="${esc(course.thumbnail_url)}" alt="">`:"💻"}</div>`;
@@ -70,6 +70,13 @@ async function loadAccess(){
 
   if(!user){
     enrolled=false;
+    const pdfBtn=document.getElementById("coursePdfBtn");
+    if(pdfBtn){
+      pdfBtn.style.display="inline-flex";
+      pdfBtn.disabled=true;
+      pdfBtn.onclick=null;
+      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
+    }
     area.innerHTML=`
       <div class="section-head left"><h2>Course <span>Content</span></h2></div>
       <div class="empty-state">
@@ -98,7 +105,12 @@ async function loadAccess(){
   if(!enrolled){
     if(btn) btn.textContent="कोर्स खरेदी करा / अनलॉक करा";
     const pdfBtn=document.getElementById("coursePdfBtn");
-    if(pdfBtn){pdfBtn.style.display="none";pdfBtn.removeAttribute("href");}
+    if(pdfBtn){
+      pdfBtn.style.display="inline-flex";
+      pdfBtn.disabled=true;
+      pdfBtn.onclick=null;
+      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
+    }
     area.innerHTML=`
       <div class="section-head left"><h2>Course <span>Content</span></h2></div>
       <div class="empty-state">
@@ -113,15 +125,21 @@ async function loadAccess(){
   if(btn) btn.disabled=true;
   const pdfBtn=document.getElementById("coursePdfBtn");
   if(pdfBtn){
+    pdfBtn.style.display="inline-flex";
+    pdfBtn.disabled=true;
+    pdfBtn.onclick=null;
+    pdfBtn.title="PDF उपलब्ध असल्यास डाउनलोड करता येईल";
     try{
       const {data:pdfCourse}=await sb.from("courses").select("pdf_url").eq("id",id).maybeSingle();
       if(pdfCourse?.pdf_url){
-        pdfBtn.href=pdfCourse.pdf_url;
-        pdfBtn.style.display="inline-flex";
-      }else{
-        pdfBtn.style.display="none";
+        pdfBtn.disabled=false;
+        pdfBtn.title="संपूर्ण कोर्स PDF डाउनलोड करा";
+        pdfBtn.onclick=()=>window.open(pdfCourse.pdf_url,"_blank","noopener");
       }
-    }catch(e){ pdfBtn.style.display="none"; }
+    }catch(e){
+      pdfBtn.disabled=true;
+      pdfBtn.onclick=null;
+    }
   }
   await loadLessons();
 }
