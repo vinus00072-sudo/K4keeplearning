@@ -62,8 +62,11 @@ async function init(){
       <p>${esc(course.description||"")}</p>
       <div class="course-meta">
         <span>⭐ रेटिंग ${course.rating||"5.0"}</span>
-        <span>⏱ कालावधी: ${esc(course.duration||"स्वतःच्या गतीने")}</span>
         <span>📚 पातळी: ${esc(course.level||"सर्व स्तर")}</span>
+      </div>
+      <div class="course-audience-box">
+        <strong>👥 हा कोर्स कोणासाठी आहे?</strong>
+        <p>हा कोर्स गृहिणी, विद्यार्थी, नोकरी करणारे कर्मचारी, उद्योजक, छोटे-मोठे व्यवसायिक, फ्रीलांसर, शिक्षक, जॉब शोधणारे, प्रोफेशनल्स आणि AI शिकून स्वतःची कौशल्ये वाढवू इच्छिणाऱ्या प्रत्येकासाठी उपयुक्त आहे.</p>
       </div>
       <div class="course-detail-labels"><span>📚 संपूर्ण ऑनलाइन अभ्यासक्रम</span><span>🎯 व्यावहारिक कौशल्यांवर भर</span><span>📘 अभ्यासासाठी PDF</span></div><div class="course-price">${priceHtml} <small>/ संपूर्ण कोर्स</small></div>
       <div class="course-actions">

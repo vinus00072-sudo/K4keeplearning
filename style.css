@@ -306,3 +306,30 @@
   .course-nav .account-user .account-avatar{width:32px;height:32px;flex-basis:32px}
   .course-nav .account-area>.account-logout{padding:0 8px!important}
 }
+
+.course-audience-short{
+  margin:10px 0 0;
+  font-size:.88rem;
+  line-height:1.5;
+  color:#5f6b7a;
+}
+.course-audience-short b{color:#1f3f75;}
+
+.course-audience-box{
+  margin:18px 0 12px;
+  padding:14px 16px;
+  border:1px solid #dbe6f5;
+  border-radius:16px;
+  background:#f5f9ff;
+}
+.course-audience-box strong{
+  display:block;
+  margin-bottom:6px;
+  color:#1f3f75;
+  font-size:1rem;
+}
+.course-audience-box p{
+  margin:0;
+  color:#5f6b7a;
+  line-height:1.6;
+}

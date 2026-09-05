@@ -15,7 +15,7 @@ function renderCourses(list){
  if(!list.length){grid.innerHTML='<div class="loading">No published courses yet. Admin can add the first course.</div>';return}
  grid.innerHTML=list.map((c,i)=>`<article class="course">
  <div class="course-img">${c.thumbnail_url?`<img src="${esc(c.thumbnail_url)}" alt="">`:icons[i%icons.length]}</div>
- <div class="course-body"><h3>${esc(c.title)}</h3><p>${esc(c.description||"Online course")}</p>
+ <div class="course-body"><h3>${esc(c.title)}</h3><p>${esc(c.description||"Online course")}</p><p class="course-audience-short"><b>कोणासाठी?</b> गृहिणी • विद्यार्थी • कर्मचारी • उद्योजक • व्यवसायिक • फ्रीलांसर • शिक्षक • Job Seekers • Professionals</p>
  <div class="rating">★★★★★ <span>${c.rating||"5.0"} रेटिंग</span></div>
  <div class="price">${c.original_price && Number(c.original_price)>Number(c.price)?`<s>₹${Number(c.original_price).toLocaleString("en-IN")}</s> <strong>₹${Number(c.price).toLocaleString("en-IN")}</strong> <small>/ संपूर्ण कोर्स</small><b class="discount-badge">${Math.round((1-Number(c.price)/Number(c.original_price))*100)}% OFF</b>`:`<strong>₹${Number(c.price).toLocaleString("en-IN")}</strong> <small>/ संपूर्ण कोर्स</small>`}</div>
  <a class="btn btn-primary course-btn" href="course.html?id=${encodeURIComponent(c.id)}">कोर्स पहा</a>
