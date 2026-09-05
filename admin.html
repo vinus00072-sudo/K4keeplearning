@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KeepLearning Admin</title><link rel="stylesheet" href="style.css"></head>
-<body><div class="offer">KeepLearning — Admin Dashboard</div><header class="header"><div class="container nav"><a class="logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Admin</small></span></a><button class="btn btn-outline" id="logoutBtn">Logout</button></div></header>
+<body><div class="offer">KeepLearning — Admin Dashboard</div><header class="header"><div class="container nav"><a class="logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Admin</small></span></a><div id="adminAccount" class="account-area"></div><button class="btn btn-outline" id="logoutBtn">Logout</button></div></header>
 <main class="section"><div class="container admin-wrap"><div id="status" class="loading">Loading admin panel…</div>
 <div id="dashboard" style="display:none"><div class="section-head left"><h2>Manage <span>Courses & Videos</span></h2><p>Add courses, then add modules/lessons and paste video URLs.</p></div>
 <div class="admin-card"><h3>Add / Edit Course</h3><input id="courseId" type="hidden"><input id="title" placeholder="Course title"><textarea id="description" placeholder="Course description"></textarea><div class="admin-two"><input id="originalPrice" type="number" min="0" placeholder="Original Price ₹"><input id="price" type="number" min="0" placeholder="Selling Price ₹"></div><p class="muted">Example: Original ₹5999 and Selling ₹499 = 92% OFF. The discount is calculated automatically.</p><div class="admin-two"><input id="category" placeholder="Category"><div class="admin-two"><input id="level" placeholder="Level"><input id="duration" placeholder="Duration"></div><input id="thumbnail" placeholder="Thumbnail image URL (optional)"><label class="check"><input id="published" type="checkbox"> Publish course</label><button class="btn btn-primary" id="saveCourseBtn">Save Course</button> <button class="btn btn-outline" id="clearCourseBtn">Clear</button></div>
@@ -14,6 +14,15 @@ const setStatus=msg=>{statusEl.textContent=msg;statusEl.style.display='block';};
 const SUPABASE_URL='https://vowlzxhgjyzwzlhdgrnz.supabase.co';
 const SUPABASE_KEY='sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY';
 let sb=null,courses=[],selectedCourse=null,lessons=[];
+async function renderAdminAccount(user){
+  const host=$('adminAccount'); if(!host||!user)return;
+  let name=user.user_metadata?.full_name||user.email||'Admin';
+  try{
+    const r=await sb.from('profiles').select('full_name').eq('id',user.id).maybeSingle();
+    if(r.data?.full_name) name=r.data.full_name;
+  }catch(e){}
+  host.innerHTML='<div class="account-user"><span class="account-avatar">👤</span><span class="account-text"><b>'+esc(name)+'</b><small>'+esc(user.email||'')+'</small></span></div>';
+}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 async function withTimeout(promise,ms,label){return Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out.')),ms))]);}
 async function init(){
@@ -32,6 +41,7 @@ async function init(){
   if(profileResult.error){setStatus('Profile check failed: '+profileResult.error.message);return;}
   if(!profileResult.data){setStatus('Profile not found for this login.');return;}
   if(profileResult.data.role!=='admin'){setStatus('Access denied. Current role: '+(profileResult.data.role||'not set'));return;}
+  await renderAdminAccount(user);
   statusEl.style.display='none';$('dashboard').style.display='block';
   await loadCourses();
  }catch(e){setStatus('Admin check failed: '+(e&&e.message?e.message:e));}

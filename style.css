@@ -32,3 +32,22 @@
  .instructors h3{font-size:18px}
  .instructors p{font-size:12px;line-height:1.65}
 }
+
+/* Shared logged-in account UI */
+.account-area{display:flex;align-items:center;gap:7px;min-width:0}
+.account-user{display:flex;align-items:center;gap:8px;min-width:0;max-width:245px;padding:5px 8px;border:1px solid #e2e6ef;border-radius:9px;background:#f8fbff}
+.account-avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#eaf2ff;font-size:15px;flex:0 0 auto}
+.account-text{display:flex;flex-direction:column;min-width:0;line-height:1.15}
+.account-text b{font-size:11px;color:#17213d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.account-text small{font-size:9px;color:#687386;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.account-logout{white-space:nowrap}
+@media(max-width:1000px){
+  .account-text{display:none}
+  .account-user{padding:4px 6px}
+}
+@media(max-width:700px){
+  .nav-actions{margin-left:auto}
+  .account-area{gap:4px}
+  .account-area .btn{padding:8px 9px;font-size:10px}
+  .account-user{border:0;background:transparent;padding:2px}
+}

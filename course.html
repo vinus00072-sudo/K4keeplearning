@@ -6,7 +6,7 @@
 </head><body>
 <header class="header"><div class="container nav">
 <a class="logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Course Player</small></span></a>
-<a class="btn btn-outline" href="index.html#courses">← All Courses</a>
+<a class="btn btn-outline" href="index.html#courses">← All Courses</a><div id="accountArea" class="account-area"><button class="btn btn-outline" onclick="openSiteLogin()">Login</button></div>
 </div></header>
 <main class="course-page">
 <div class="container">
@@ -97,7 +97,7 @@ async function loadAccess(){
       <div class="empty-state">
         <h3>🔒 Course Content is Locked</h3>
         <p>Purchase this course to unlock all videos and study materials.</p>
-        <button class="btn btn-primary" onclick="enroll()">Buy / Unlock Course</button>
+        
       </div>`;
     return;
   }
@@ -239,7 +239,8 @@ async function doLogin(){
   });
   if(error){alert(error.message);return}
   closeModal();
-  location.reload();
+  await loadAccess();
+  if(typeof window.refreshKeepLearningAuth==="function") await window.refreshKeepLearningAuth();
 }
 
 function playVideo(url,title){
@@ -263,5 +264,16 @@ function playVideo(url,title){
 
 function closeModal(){document.getElementById("modal").classList.remove("show")}
 document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+window.onKeepLearningLogout=async function(){
+  enrolled=false;
+  const btn=document.getElementById("enrollBtn");
+  if(btn){btn.disabled=false;btn.textContent="Buy / Unlock Course";}
+  await loadAccess();
+};
+sb.auth.onAuthStateChange(function(event){
+  if(event==="SIGNED_IN" || event==="SIGNED_OUT" || event==="TOKEN_REFRESHED" || event==="USER_UPDATED"){
+    setTimeout(loadAccess,0);
+  }
+});
 init();
-</script></body></html>
+</script><script src="auth-ui.js"></script></body></html>

@@ -29,3 +29,11 @@ Add these in the Vercel project settings (Production, and Preview if you want to
 The existing `payments` table should contain `user_id`, `course_id`, `razorpay_payment_id`, `razorpay_order_id`, `razorpay_signature`, `amount`, `currency`, and `status`.
 
 The existing `enrollments` table should have the unique `(user_id, course_id)` constraint used by the site.
+
+
+## Authentication update
+- Shared Supabase auth UI now shows the logged-in user's name/email and a Logout button.
+- Login state is driven by Supabase session/auth events, including refresh/token changes.
+- Course access is rechecked after login/logout.
+- The course page no longer shows a duplicate lower Buy/Unlock button.
+- No mobile number was added to the KeepLearning UI.
