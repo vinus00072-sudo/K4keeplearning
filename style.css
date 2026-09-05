@@ -333,3 +333,12 @@
   color:#5f6b7a;
   line-height:1.6;
 }
+
+/* Logged-in account: show name only, up to 7 words */
+.account-area .user-name,
+.account-area .account-name,
+.account-area [class*="user-name"]{
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 24rem;
+}

@@ -10,7 +10,15 @@
     return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
   }
 
-  async function getDisplayName(user){
+  
+function getNameOnly(displayName) {
+  const raw = String(displayName || "").trim();
+  if (!raw) return "";
+  const words = raw.split(/\s+/).filter(Boolean);
+  return words.length > 7 ? words.slice(0, 7).join(" ") + "…" : words.join(" ");
+}
+
+async function getDisplayName(user){
     if(!user) return "";
     try{
       const {data}=await authClient.from("profiles").select("full_name").eq("id",user.id).maybeSingle();
