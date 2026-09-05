@@ -34,7 +34,14 @@
     const email=esc(user.email||"");
     host.innerHTML=`
       <div class="account-user" title="${email}">
-        <span class="account-avatar">👤</span>
+        <span class="account-avatar" aria-label="Account">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <path d="M15 35c2.5-5 6-7.5 9-7.5s6.5 2.5 9 7.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="24" cy="18" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <path d="M35 10l1.5 3.5L40 15l-3.5 1.5L35 20l-1.5-3.5L30 15l3.5-1.5L35 10z" fill="currentColor" stroke="none"/>
+          </svg>
+        </span>
         <span class="account-text"><b>${safe}</b><small>${email}</small></span>
       </div>
       <button class="btn btn-outline account-logout" onclick="siteLogout()">Logout</button>`;

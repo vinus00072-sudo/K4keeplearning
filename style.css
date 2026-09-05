@@ -42,12 +42,20 @@
 .account-text small{font-size:9px;color:#687386;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
 .account-logout{white-space:nowrap}
 @media(max-width:1000px){
-  .account-text{display:none}
-  .account-user{padding:4px 6px}
+  .account-text{display:flex}
+  .account-user{padding:4px 7px;max-width:165px}
+  .account-text b{font-size:10px}
+  .account-text small{font-size:8px;max-width:105px}
 }
 @media(max-width:700px){
   .nav-actions{margin-left:auto}
-  .account-area{gap:4px}
+  .account-area{gap:5px}
   .account-area .btn{padding:8px 9px;font-size:10px}
-  .account-user{border:0;background:transparent;padding:2px}
+  .account-user{border:1px solid #dce7f5;background:#f7fbff;padding:4px 6px;max-width:145px}
+  .account-text{display:flex}
+  .account-text b{font-size:10px;max-width:88px}
+  .account-text small{font-size:8px;max-width:88px}
+  .account-avatar{width:27px;height:27px;color:#2463c5;background:#edf5ff}
 }
+
+.account-avatar svg{width:18px;height:18px;display:block}
