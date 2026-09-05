@@ -241,3 +241,13 @@
   .share-option small{font-size:8px}
 }
 @media(max-width:360px){.share-grid{grid-template-columns:1fr}}
+
+/* Paid course PDF download action */
+.pdf-download{white-space:nowrap}
+@media(max-width:700px){
+  .lesson-action{display:flex;flex-wrap:wrap;gap:7px}
+  .pdf-download{font-size:11px}
+}
+
+.course-pdf-btn{white-space:nowrap}
+@media(max-width:700px){.course-pdf-btn{font-size:11px;padding:10px 12px}}
