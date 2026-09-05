@@ -139,20 +139,34 @@ async function loadAccess(){
   const pdfBtn=document.getElementById("coursePdfBtn");
   if(pdfBtn){
     pdfBtn.style.display="inline-flex";
-    pdfBtn.disabled=true;
-    pdfBtn.onclick=null;
-    pdfBtn.title="PDF उपलब्ध असल्यास डाउनलोड करता येईल";
-    try{
-      const {data:pdfCourse}=await sb.from("courses").select("pdf_url").eq("id",id).maybeSingle();
-      if(pdfCourse?.pdf_url){
-        pdfBtn.disabled=false;
-        pdfBtn.title="संपूर्ण कोर्स PDF डाउनलोड करा";
-        pdfBtn.onclick=()=>window.open(pdfCourse.pdf_url,"_blank","noopener");
-      }
-    }catch(e){
+    pdfBtn.disabled=false;
+    pdfBtn.title="संपूर्ण कोर्स PDF डाउनलोड करा";
+    pdfBtn.onclick=async()=>{
       pdfBtn.disabled=true;
-      pdfBtn.onclick=null;
-    }
+      const originalText=pdfBtn.textContent;
+      pdfBtn.textContent="⏳ PDF तयार होत आहे...";
+      try{
+        const {data:{session}}=await sb.auth.getSession();
+        const token=session?.access_token;
+        if(!token) throw new Error("कृपया पुन्हा लॉगिन करा.");
+        const response=await fetch("/api/download-pdf",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+token
+          },
+          body:JSON.stringify({courseId:id})
+        });
+        const result=await response.json().catch(()=>({}));
+        if(!response.ok || !result.signedUrl) throw new Error(result.error||"PDF डाउनलोड करता आला नाही.");
+        window.open(result.signedUrl,"_blank","noopener");
+      }catch(e){
+        alert(e.message||"PDF डाउनलोड करता आला नाही.");
+      }finally{
+        pdfBtn.disabled=false;
+        pdfBtn.textContent=originalText;
+      }
+    };
   }
   await loadLessons();
 }
