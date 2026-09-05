@@ -6,7 +6,7 @@
 </head><body>
 <header class="header"><div class="container nav">
 <a class="logo" href="index.html"><span class="logo-mark">📖</span><span><strong>Keep<span>Learning</span></strong><small>Course Player</small></span></a>
-<a class="btn btn-outline" href="index.html#courses">← All Courses</a><div id="accountArea" class="account-area"><button class="btn btn-outline" onclick="openSiteLogin()">Login</button></div>
+<a class="btn btn-outline" href="index.html#courses">← सर्व कोर्स</a><div id="accountArea" class="account-area"><button class="btn btn-outline" onclick="openSiteLogin()">Login</button></div>
 </div></header>
 <main class="course-page">
 <div class="container">
@@ -48,11 +48,11 @@ async function init(){
       <h1>${esc(course.title)}</h1>
       <p>${esc(course.description||"")}</p>
       <div class="course-meta">
-        <span>⭐ ${course.rating||"5.0"}</span>
-        <span>⏱ ${esc(course.duration||"Self paced")}</span>
-        <span>📚 ${esc(course.level||"All levels")}</span>
+        <span>⭐ रेटिंग ${course.rating||"5.0"}</span>
+        <span>⏱ कालावधी: ${esc(course.duration||"स्वतःच्या गतीने")}</span>
+        <span>📚 पातळी: ${esc(course.level||"सर्व स्तर")}</span>
       </div>
-      <div class="course-price">${priceHtml} <small>/course</small></div>
+      <div class="course-detail-labels"><span>📚 संपूर्ण ऑनलाइन अभ्यासक्रम</span><span>🎯 व्यावहारिक कौशल्यांवर भर</span><span>📘 अभ्यासासाठी PDF</span></div><div class="course-price">${priceHtml} <small>/ संपूर्ण कोर्स</small></div>
       <div class="course-actions">
         <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">कोर्स खरेदी करून अनलॉक करा</button>
         <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">↗ कोर्स शेअर करा</button>
@@ -74,7 +74,7 @@ async function loadAccess(){
       <div class="section-head left"><h2>Course <span>Content</span></h2></div>
       <div class="empty-state">
         <h3>🔒 कोर्सचे व्हिडिओ लॉक आहेत</h3>
-        <p>सर्व व्हिडिओ आणि संपूर्ण कोर्स PDF मिळवण्यासाठी लॉगिन करून कोर्सची खरेदी पूर्ण करा.</p>
+        <p>सर्व व्हिडिओ धडे आणि संपूर्ण अभ्यास PDF मिळवण्यासाठी लॉगिन करून कोर्सची खरेदी पूर्ण करा.</p>
         <button class="btn btn-primary" onclick="showLogin()">पुढे जाण्यासाठी लॉगिन करा</button>
       </div>`;
     return;
@@ -96,7 +96,7 @@ async function loadAccess(){
   const btn=document.getElementById("enrollBtn");
 
   if(!enrolled){
-    if(btn) btn.textContent="Buy / Unlock Course";
+    if(btn) btn.textContent="कोर्स खरेदी करा / अनलॉक करा";
     const pdfBtn=document.getElementById("coursePdfBtn");
     if(pdfBtn){pdfBtn.style.display="none";pdfBtn.removeAttribute("href");}
     area.innerHTML=`
@@ -173,7 +173,7 @@ async function enroll(){
   if(enrolled)return;
   if(!window.Razorpay){alert("Payment gateway could not load. Please refresh and try again.");return}
 
-  const oldText=btn?btn.textContent:"Buy / Unlock Course";
+  const oldText=btn?btn.textContent:"कोर्स खरेदी करा / अनलॉक करा";
   if(btn){btn.disabled=true;btn.textContent="Starting secure payment…"}
 
   try{
@@ -214,12 +214,12 @@ async function enroll(){
             })
           });
           const result=await verifyResp.json();
-          if(!verifyResp.ok) throw new Error(result.error||"Payment verification failed.");
+          if(!verifyResp.ok) throw new Error(result.error||"पेमेंट पडताळणी अयशस्वी झाली.");
           alert("Payment successful! Your course is now unlocked.");
           location.reload();
         }catch(err){
           console.error(err);
-          alert(err.message||"Payment verification failed. Please contact support if money was deducted.");
+          alert(err.message||"पेमेंट पडताळणी अयशस्वी झाली. Please contact support if money was deducted.");
           if(btn){btn.disabled=false;btn.textContent=oldText}
         }
       },
@@ -229,7 +229,7 @@ async function enroll(){
     const rzp=new Razorpay(options);
     rzp.on("payment.failed",function(response){
       console.error("Razorpay payment failed",response);
-      alert(response.error?.description||"Payment failed. Please try again.");
+      alert(response.error?.description||"पेमेंट अयशस्वी झाले. कृपया पुन्हा प्रयत्न करा.");
       if(btn){btn.disabled=false;btn.textContent=oldText}
     });
     rzp.open();
@@ -368,7 +368,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")closeShareMenu()});
 window.onKeepLearningLogout=async function(){
   enrolled=false;
   const btn=document.getElementById("enrollBtn");
-  if(btn){btn.disabled=false;btn.textContent="Buy / Unlock Course";}
+  if(btn){btn.disabled=false;btn.textContent="कोर्स खरेदी करा / अनलॉक करा";}
   await loadAccess();
 };
 sb.auth.onAuthStateChange(function(event){
