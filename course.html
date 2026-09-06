@@ -231,10 +231,140 @@ async function loadLessons(){
     </div>`;
 }
 
-async function enroll(){
+function purchaseSignupMarkup(message=""){
+  const courseName=esc(course?.title||"हा कोर्स");
+  return `
+    <div class="purchase-signup" style="text-align:left">
+      <div style="text-align:center;font-size:42px;margin-bottom:8px">🚀</div>
+      <h2 style="text-align:center">कोर्स खरेदीसाठी खाते तयार करा</h2>
+      <p style="text-align:center;color:#64748b">फक्त काही माहिती भरा आणि लगेच secure payment कडे पुढे जा.</p>
+      ${message ? `<div style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:12px;margin:14px 0;font-size:14px">${esc(message)}</div>` : ""}
+      <div style="display:grid;gap:12px;text-align:left;margin:18px 0">
+        <label><strong>पूर्ण नाव</strong><input id="purchaseName" type="text" placeholder="तुमचे पूर्ण नाव" autocomplete="name" maxlength="100"></label>
+        <label><strong>मोबाईल नंबर</strong><input id="purchaseMobile" type="tel" inputmode="numeric" placeholder="10 अंकी मोबाईल नंबर" autocomplete="tel" maxlength="10"></label>
+        <label><strong>Email</strong><input id="purchaseEmail" type="email" placeholder="तुमचा Email" autocomplete="email" maxlength="254"></label>
+        <label><strong>Password</strong><input id="purchasePassword" type="password" placeholder="किमान 6 characters" autocomplete="new-password" minlength="6" maxlength="72"></label>
+      </div>
+      <button id="purchaseSignupBtn" class="btn btn-primary btn-lg" onclick="createPurchaseAccount()">खाते तयार करा आणि Payment कडे जा</button>
+      <p style="font-size:13px;color:#64748b;text-align:center;margin-top:12px">खाते तयार झाल्यानंतर तुम्हाला थेट secure payment कडे नेले जाईल.</p>
+      <p style="font-size:14px;text-align:center;margin-top:14px">आधीच खाते आहे? <a href="#" onclick="showPurchaseLogin();return false"><strong>Login करा</strong></a></p>
+    </div>`;
+}
+
+async function showPurchaseSignup(message=""){
+  document.getElementById("modalContent").innerHTML=purchaseSignupMarkup(message);
+  document.getElementById("modal").classList.add("show");
+  setTimeout(()=>document.getElementById("purchaseName")?.focus(),100);
+}
+
+function showPurchaseLogin(message=""){
+  document.getElementById("modalContent").innerHTML=`
+    <div class="purchase-signup" style="text-align:left">
+      <div style="text-align:center;font-size:42px;margin-bottom:8px">🔐</div>
+      <h2 style="text-align:center">Login करून Payment सुरू करा</h2>
+      <p style="text-align:center;color:#64748b">तुमचे खाते आधीच आहे. Login केल्यानंतर तुम्ही थेट payment कडे जाल.</p>
+      ${message ? `<div style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:12px;margin:14px 0;font-size:14px">${esc(message)}</div>` : ""}
+      <div style="display:grid;gap:12px;margin:18px 0">
+        <label><strong>Email</strong><input id="purchaseLoginEmail" type="email" placeholder="तुमचा Email" autocomplete="email" maxlength="254"></label>
+        <label><strong>Password</strong><input id="purchaseLoginPassword" type="password" placeholder="तुमचा Password" autocomplete="current-password" maxlength="72"></label>
+      </div>
+      <button id="purchaseLoginBtn" class="btn btn-primary btn-lg" onclick="purchaseLoginAndPay()">Login आणि Payment कडे जा</button>
+      <p style="font-size:14px;text-align:center;margin-top:14px">नवीन खाते हवे आहे? <a href="#" onclick="showPurchaseSignup();return false"><strong>खाते तयार करा</strong></a></p>
+    </div>`;
+  document.getElementById("modal").classList.add("show");
+  setTimeout(()=>document.getElementById("purchaseLoginEmail")?.focus(),100);
+}
+
+async function createPurchaseAccount(){
+  const name=document.getElementById("purchaseName")?.value.trim();
+  const mobile=document.getElementById("purchaseMobile")?.value.trim().replace(/\D/g,"");
+  const email=document.getElementById("purchaseEmail")?.value.trim().toLowerCase();
+  const password=document.getElementById("purchasePassword")?.value||"";
+  const btn=document.getElementById("purchaseSignupBtn");
+  if(!name||!email||!password||!mobile){alert("कृपया सर्व माहिती भरा.");return}
+  if(name.length<2){alert("कृपया योग्य पूर्ण नाव टाका.");return}
+  if(!/^[6-9]\d{9}$/.test(mobile)){alert("कृपया योग्य 10 अंकी मोबाईल नंबर टाका.");return}
+  if(password.length<6){alert("Password किमान 6 characters असावा.");return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("कृपया योग्य Email address टाका.");return}
+  if(btn){btn.disabled=true;btn.textContent="खाते तयार होत आहे..."}
+  try{
+    const {data,error}=await sb.auth.signUp({
+      email,
+      password,
+      options:{data:{full_name:name,mobile:mobile}}
+    });
+    if(error){
+      const msg=String(error.message||"").toLowerCase();
+      if(msg.includes("already registered")||msg.includes("already been registered")||msg.includes("user already exists")){
+        showPurchaseLogin("या Email वर आधीच खाते आहे. कृपया Login करा; तुमचा course purchase flow तिथूनच पुढे सुरू होईल.");
+        return;
+      }
+      throw error;
+    }
+
+    // If Supabase email confirmation is enabled, there is no authenticated
+    // session yet and starting a payment would be unsafe/impossible.
+    if(!data?.session){
+      document.getElementById("modalContent").innerHTML=`
+        <div style="text-align:center;padding:10px">
+          <div style="font-size:52px">📧</div>
+          <h2>खाते तयार झाले!</h2>
+          <p>तुमच्या Email वर confirmation link पाठवली आहे. Email confirm केल्यानंतर खालील बटण दाबा.</p>
+          <button class="btn btn-primary" onclick="showPurchaseLogin()">Email Confirm केल्यानंतर Login करा</button>
+          <p style="font-size:13px;color:#64748b;margin-top:12px">Security साठी Email confirmation पूर्ण होईपर्यंत payment सुरू केले जाणार नाही.</p>
+        </div>`;
+      return;
+    }
+
+    await finishPurchaseSignupAndPay();
+  }catch(e){
+    console.error("Purchase signup failed",e);
+    if(btn){btn.disabled=false;btn.textContent="खाते तयार करा आणि Payment कडे जा"}
+    const raw=String(e.message||"");
+    if(/invalid.*email|email.*invalid/i.test(raw)) alert("कृपया योग्य Email address टाका.");
+    else if(/password/i.test(raw)) alert("Password किमान 6 characters असावा.");
+    else alert(raw||"Account तयार करता आले नाही. कृपया पुन्हा प्रयत्न करा.");
+  }
+}
+
+async function finishPurchaseSignupAndPay(){
+  const courseName=esc(course?.title||"हा कोर्स");
+  document.getElementById("modalContent").innerHTML=`
+    <div style="text-align:center;padding:10px">
+      <div style="font-size:52px">✅</div>
+      <h2>खाते यशस्वीपणे तयार झाले!</h2>
+      <p><strong>${courseName}</strong> साठी secure payment सुरू करत आहोत...</p>
+      <div style="margin-top:14px;color:#64748b;font-size:14px">कृपया payment window बंद करू नका.</div>
+    </div>`;
+  if(typeof window.refreshKeepLearningAuth==="function") await window.refreshKeepLearningAuth();
+  await new Promise(resolve=>setTimeout(resolve,700));
+  closeModal();
+  await loadAccess();
+  await enroll();
+}
+
+async function purchaseLoginAndPay(){
+  const email=document.getElementById("purchaseLoginEmail")?.value.trim().toLowerCase();
+  const password=document.getElementById("purchaseLoginPassword")?.value||"";
+  const btn=document.getElementById("purchaseLoginBtn");
+  if(!email||!password){alert("कृपया Email आणि Password भरा.");return}
+  if(btn){btn.disabled=true;btn.textContent="Login होत आहे..."}
+  try{
+    const {data,error}=await sb.auth.signInWithPassword({email,password});
+    if(error) throw error;
+    if(!data?.session) throw new Error("Login session तयार झाली नाही. कृपया पुन्हा प्रयत्न करा.");
+    await finishPurchaseSignupAndPay();
+  }catch(e){
+    console.error("Purchase login failed",e);
+    if(btn){btn.disabled=false;btn.textContent="Login आणि Payment कडे जा"}
+    alert(e.message||"Login करता आले नाही. कृपया Email आणि Password तपासा.");
+  }
+}
+
+function enroll(){
   const btn=document.getElementById("enrollBtn");
   const {data:{user}}=await sb.auth.getUser();
-  if(!user){showLogin();return}
+  if(!user){showPurchaseSignup();return}
   if(enrolled)return;
   if(!window.Razorpay){alert("Payment gateway could not load. Please refresh and try again.");return}
 
