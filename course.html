@@ -361,7 +361,7 @@ async function purchaseLoginAndPay(){
   }
 }
 
-function enroll(){
+async function enroll(){
   const btn=document.getElementById("enrollBtn");
   const {data:{user}}=await sb.auth.getUser();
   if(!user){showPurchaseSignup();return}
