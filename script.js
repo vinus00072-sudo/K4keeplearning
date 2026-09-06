@@ -2,7 +2,7 @@ const SUPABASE_URL="https://vowlzxhgjyzwzlhdgrnz.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const icons=["💻","📊","🎨","📣","📱","🐍","☁️","📈","📚","🎓"];
-const HINDI_COURSE_ID="14e5960c-51f4-4e76-ae1a-833d64e25531";
+const HINDI_COURSE_ID="b7d4d1d7-8b7f-4b0e-9b7a-3a8b2d6c4101";
 const ORIGINAL_AI_COURSE_ID="6a946d1e-c258-4dfb-95f5-357d7a163c40";
 const COURSE_COVER_IMAGES={
   [HINDI_COURSE_ID]:"assets/ai-income-course-cover.jpg",
