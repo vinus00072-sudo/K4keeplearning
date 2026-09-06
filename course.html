@@ -2,31 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Course — KeepLearning</title><link rel="stylesheet" href="style.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-.hindi-course .course-hero-text h1,.hindi-course .course-hero-text>p,.hindi-course .course-audience-box,.hindi-course .course-detail-labels,.hindi-course .course-meta,.hindi-course .section-head,.hindi-course .empty-state,.hindi-course .lesson-info{font-family:"Noto Sans Devanagari",sans-serif}
-.hindi-course-card h3,.hindi-course-card p,.hindi-course-card .course-audience-short{font-family:"Noto Sans Devanagari",sans-serif}
-</style>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1092467633196590');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1092467633196590&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
 </head><body>
 <header class="header course-header">
   <div class="container course-nav">
@@ -36,7 +12,7 @@ src="https://www.facebook.com/tr?id=1092467633196590&ev=PageView&noscript=1"
     </a>
     <div class="course-nav-actions">
       <a class="back-courses-btn" href="index.html#courses" aria-label="सर्व कोर्स">
-        <span class="back-arrow">←</span><span>All Courses</span>
+        <span class="back-arrow">←</span><span>सर्व कोर्स</span>
       </a>
       <div id="accountArea" class="account-area">
         <button class="btn btn-outline" onclick="openSiteLogin()">Login</button>
@@ -59,19 +35,6 @@ const SUPABASE_ANON_KEY="sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const id=new URLSearchParams(location.search).get("id");
 let course=null, lessons=[], enrolled=false;
-const HINDI_COURSE_ID="14e5960c-51f4-4e76-ae1a-833d64e25531";
-const ORIGINAL_AI_COURSE_ID="6a946d1e-c258-4dfb-95f5-357d7a163c40";
-const COURSE_COVER_IMAGES={
-  [HINDI_COURSE_ID]:"assets/ai-income-course-cover.jpg",
-  [ORIGINAL_AI_COURSE_ID]:"assets/ai-marathi-course-cover.jpg"
-};
-let isHindiCourse=false;
-const ui={
-  hi:{rating:"⭐ रेटिंग",level:"📚 स्तर",audienceTitle:"👥 यह कोर्स किन लोगों के लिए है?",audience:"यह कोर्स गृहिणियों, विद्यार्थियों, नौकरी करने वाले कर्मचारियों, उद्यमियों, छोटे-बड़े व्यवसायियों, फ्रीलांसरों, शिक्षकों, नौकरी खोजने वालों, प्रोफेशनल्स और AI सीखकर अपनी कौशल बढ़ाने वाले हर व्यक्ति के लिए उपयोगी है।",details:["📘 पूरा हिंदी प्रैक्टिकल कोर्स","💰 AI से कमाई के वास्तविक तरीके","📄 130 पेज की हिंदी PDF"],content:"कोर्स की सामग्री",lockedTitle:"🔒 कोर्स का अध्ययन सामग्री लॉक है",lockedText:"पूरी कोर्स सामग्री और अध्ययन PDF पाने के लिए खरीदारी पूरी करें।",noLessons:"इस कोर्स की मुख्य सामग्री पूरी हिंदी PDF में दी गई है।",buy:"Buy Course / Unlock",shareBtn:"↗ Share Course",pdf:"📘 Download Complete Course PDF",unlocked:"✓ ✓ Course Unlocked",login:"Login to Continue"},
-  en:{rating:"⭐ Rating",level:"📚 Level",audienceTitle:"👥 Who is this course for?",audience:"This course is useful for learners who want practical skills and real-world results.",details:["📘 Complete practical course","🎯 Practical skills","📄 Course PDF"],content:"Course Content",lockedTitle:"🔒 Course Content is Locked",lockedText:"Complete your purchase to access the course content and study material.",noLessons:"No lessons have been added yet.",buy:"Buy Course / Unlock",shareBtn:"↗ Share Course",pdf:"📘 Download Complete Course PDF",unlocked:"✓ ✓ Course Unlocked",login:"Login to Continue"}
-};
-function T(k){return (isHindiCourse?ui.hi:ui.en)[k]||ui.en[k]||k;}
-
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 
@@ -86,9 +49,6 @@ async function init(){
     return;
   }
   course=data;
-  isHindiCourse=String(course.content_language||"").toLowerCase()==="hindi" || String(course.id)===HINDI_COURSE_ID;
-  document.documentElement.lang=isHindiCourse?"hi":"en";
-  document.body.classList.toggle("hindi-course",isHindiCourse);
   document.title=course.title+" — KeepLearning";
 
   const priceHtml = course.original_price && Number(course.original_price)>Number(course.price)
@@ -101,21 +61,21 @@ async function init(){
       <h1>${esc(course.title)}</h1>
       <p>${esc(course.description||"")}</p>
       <div class="course-meta">
-        <span>${T("rating")} ${course.rating||"5.0"}</span>
-        <span>${T("level")}: ${esc(course.level||"All Levels")}</span>
+        <span>⭐ रेटिंग ${course.rating||"5.0"}</span>
+        <span>📚 पातळी: ${esc(course.level||"सर्व स्तर")}</span>
       </div>
       <div class="course-audience-box">
-        <strong>${T("audienceTitle")}</strong>
-        <p>${T("audience")}</p>
+        <strong>👥 हा कोर्स कोणासाठी आहे?</strong>
+        <p>हा कोर्स गृहिणी, विद्यार्थी, नोकरी करणारे कर्मचारी, उद्योजक, छोटे-मोठे व्यवसायिक, फ्रीलांसर, शिक्षक, जॉब शोधणारे, प्रोफेशनल्स आणि AI शिकून स्वतःची कौशल्ये वाढवू इच्छिणाऱ्या प्रत्येकासाठी उपयुक्त आहे.</p>
       </div>
-      <div class="course-detail-labels">${T("details").map(x=>`<span>${x}</span>`).join("")}</div><div class="course-price">${priceHtml} <small>/ Full Course</small></div>
+      <div class="course-detail-labels"><span>📚 संपूर्ण ऑनलाइन अभ्यासक्रम</span><span>🎯 व्यावहारिक कौशल्यांवर भर</span><span>📘 अभ्यासासाठी PDF</span></div><div class="course-price">${priceHtml} <small>/ संपूर्ण कोर्स</small></div>
       <div class="course-actions">
-        <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">${T("buy")}</button>
-        <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">${T("shareBtn")}</button>
-        <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" disabled>${T("pdf")}</button>
+        <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">कोर्स खरेदी करून अनलॉक करा</button>
+        <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">↗ कोर्स शेअर करा</button>
+        <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" disabled>📘 संपूर्ण कोर्स PDF डाउनलोड करा</button>
       </div>
     </div>
-    <div class="course-hero-icon">${(COURSE_COVER_IMAGES[String(course.id)]||course.thumbnail_url)?`<img src="${esc(COURSE_COVER_IMAGES[String(course.id)]||course.thumbnail_url)}" alt="Course learners">`:"💻"}</div>`;
+    <div class="course-hero-icon">${course.thumbnail_url?`<img src="${esc(course.thumbnail_url)}" alt="">`:"💻"}</div>`;
 
   await loadAccess();
 }
@@ -131,14 +91,14 @@ async function loadAccess(){
       pdfBtn.style.display="inline-flex";
       pdfBtn.disabled=true;
       pdfBtn.onclick=null;
-      pdfBtn.title="Available after successful payment";
+      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
     }
     area.innerHTML=`
-      <div class="section-head left"><h2>${T("content")}</h2></div>
+      <div class="section-head left"><h2>कोर्सची <span>सामग्री</span></h2></div>
       <div class="empty-state">
-        <h3>${T("lockedTitle")}</h3>
-        <p>${T("lockedText")}</p>
-        <button class="btn btn-primary" onclick="showLogin()">${T("login")}</button>
+        <h3>🔒 कोर्सचे व्हिडिओ लॉक आहेत</h3>
+        <p>सर्व व्हिडिओ धडे आणि संपूर्ण अभ्यास PDF मिळवण्यासाठी लॉगिन करून कोर्सची खरेदी पूर्ण करा.</p>
+        <button class="btn btn-primary" onclick="showLogin()">पुढे जाण्यासाठी लॉगिन करा</button>
       </div>`;
     return;
   }
@@ -159,38 +119,39 @@ async function loadAccess(){
   const btn=document.getElementById("enrollBtn");
 
   if(!enrolled){
-    if(btn) btn.textContent=T("buy");
+    if(btn) btn.textContent="कोर्स खरेदी करा / अनलॉक करा";
     const pdfBtn=document.getElementById("coursePdfBtn");
     if(pdfBtn){
       pdfBtn.style.display="inline-flex";
       pdfBtn.disabled=true;
       pdfBtn.onclick=null;
-      pdfBtn.title="Available after successful payment";
+      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
     }
     area.innerHTML=`
-      <div class="section-head left"><h2>${T("content")}</h2></div>
+      <div class="section-head left"><h2>कोर्सची <span>सामग्री</span></h2></div>
       <div class="empty-state">
-        <h3>${T("lockedTitle")}</h3>
-        <p>${T("lockedText")}</p>
+        <h3>🔒 कोर्सचा अभ्यासक्रम is Locked</h3>
+        <p>सर्व व्हिडिओ धडे आणि अभ्यास साहित्य पाहण्यासाठी कोर्सची खरेदी पूर्ण करा.</p>
+        
       </div>`;
     return;
   }
 
-  if(btn) btn.textContent=T("unlocked");
+  if(btn) btn.textContent="✓ ✓ कोर्स अनलॉक झाला";
   if(btn) btn.disabled=true;
   const pdfBtn=document.getElementById("coursePdfBtn");
   if(pdfBtn){
     pdfBtn.style.display="inline-flex";
     pdfBtn.disabled=false;
-    pdfBtn.title="Download complete course PDF";
+    pdfBtn.title="संपूर्ण कोर्स PDF डाउनलोड करा";
     pdfBtn.onclick=async()=>{
       pdfBtn.disabled=true;
       const originalText=pdfBtn.textContent;
-      pdfBtn.textContent="⏳ Preparing PDF...";
+      pdfBtn.textContent="⏳ PDF तयार होत आहे...";
       try{
         const {data:{session}}=await sb.auth.getSession();
         const token=session?.access_token;
-        if(!token) throw new Error("Please login again.");
+        if(!token) throw new Error("कृपया पुन्हा लॉगिन करा.");
         const response=await fetch("/api/download-pdf",{
           method:"POST",
           headers:{
@@ -200,10 +161,10 @@ async function loadAccess(){
           body:JSON.stringify({courseId:id})
         });
         const result=await response.json().catch(()=>({}));
-        if(!response.ok || !result.signedUrl) throw new Error(result.error||"Unable to download PDF.");
+        if(!response.ok || !result.signedUrl) throw new Error(result.error||"PDF डाउनलोड करता आला नाही.");
         window.open(result.signedUrl,"_blank","noopener");
       }catch(e){
-        alert(e.message||"Unable to download PDF.");
+        alert(e.message||"PDF डाउनलोड करता आला नाही.");
       }finally{
         pdfBtn.disabled=false;
         pdfBtn.textContent=originalText;
@@ -227,14 +188,14 @@ async function loadLessons(){
 
   lessons=data||[];
   if(!lessons.length){
-    area.innerHTML=`<div class='empty-state'><h3>${T("noLessons")}</h3><p>${isHindiCourse?"इस कोर्स की मुख्य सामग्री पूरी हिंदी PDF में उपलब्ध है।":"Admin can add videos from the Admin Dashboard."}</p></div>`;
+    area.innerHTML="<div class='empty-state'><h3>No lessons added yet</h3><p>Admin can add videos from the Admin Dashboard.</p></div>";
     return;
   }
 
   area.innerHTML=`
     <div class="section-head left">
-      <h2>${T("content")}</h2>
-      <p>${lessons.length} ${isHindiCourse?"अध्याय — सभी अनलॉक हैं":"lessons — all unlocked"}</p>
+      <h2>कोर्सची <span>सामग्री</span></h2>
+      <p>${lessons.length} धडे — सर्व अनलॉक आहेत</p>
     </div>
     <div class="lessons">
       ${lessons.map((l,i)=>`
@@ -247,146 +208,16 @@ async function loadLessons(){
           <div class="lesson-action">
             ${l.video_url
               ? `<button class="btn btn-primary" onclick="playVideo(${JSON.stringify(l.video_url)},${JSON.stringify(l.title)})">▶ व्हिडिओ पहा</button>`
-              : "<span class='muted'>Video not added</span>"}
+              : "<span class='muted'>व्हिडिओ जोडलेला नाही</span>"}
           </div>
         </article>`).join("")}
     </div>`;
 }
 
-function purchaseSignupMarkup(message=""){
-  const courseName=esc(course?.title||"हा कोर्स");
-  return `
-    <div class="purchase-signup" style="text-align:left">
-      <div style="text-align:center;font-size:42px;margin-bottom:8px">🚀</div>
-      <h2 style="text-align:center">कोर्स खरेदीसाठी खाते तयार करा</h2>
-      <p style="text-align:center;color:#64748b">फक्त काही माहिती भरा आणि लगेच secure payment कडे पुढे जा.</p>
-      ${message ? `<div style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:12px;margin:14px 0;font-size:14px">${esc(message)}</div>` : ""}
-      <div style="display:grid;gap:12px;text-align:left;margin:18px 0">
-        <label><strong>पूर्ण नाव</strong><input id="purchaseName" type="text" placeholder="तुमचे पूर्ण नाव" autocomplete="name" maxlength="100"></label>
-        <label><strong>मोबाईल नंबर</strong><input id="purchaseMobile" type="tel" inputmode="numeric" placeholder="10 अंकी मोबाईल नंबर" autocomplete="tel" maxlength="10"></label>
-        <label><strong>Email</strong><input id="purchaseEmail" type="email" placeholder="तुमचा Email" autocomplete="email" maxlength="254"></label>
-        <label><strong>Password</strong><input id="purchasePassword" type="password" placeholder="किमान 6 characters" autocomplete="new-password" minlength="6" maxlength="72"></label>
-      </div>
-      <button id="purchaseSignupBtn" class="btn btn-primary btn-lg" onclick="createPurchaseAccount()">खाते तयार करा आणि Payment कडे जा</button>
-      <p style="font-size:13px;color:#64748b;text-align:center;margin-top:12px">खाते तयार झाल्यानंतर तुम्हाला थेट secure payment कडे नेले जाईल.</p>
-      <p style="font-size:14px;text-align:center;margin-top:14px">आधीच खाते आहे? <a href="#" onclick="showPurchaseLogin();return false"><strong>Login करा</strong></a></p>
-    </div>`;
-}
-
-async function showPurchaseSignup(message=""){
-  document.getElementById("modalContent").innerHTML=purchaseSignupMarkup(message);
-  document.getElementById("modal").classList.add("show");
-  setTimeout(()=>document.getElementById("purchaseName")?.focus(),100);
-}
-
-function showPurchaseLogin(message=""){
-  document.getElementById("modalContent").innerHTML=`
-    <div class="purchase-signup" style="text-align:left">
-      <div style="text-align:center;font-size:42px;margin-bottom:8px">🔐</div>
-      <h2 style="text-align:center">Login करून Payment सुरू करा</h2>
-      <p style="text-align:center;color:#64748b">तुमचे खाते आधीच आहे. Login केल्यानंतर तुम्ही थेट payment कडे जाल.</p>
-      ${message ? `<div style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:12px;margin:14px 0;font-size:14px">${esc(message)}</div>` : ""}
-      <div style="display:grid;gap:12px;margin:18px 0">
-        <label><strong>Email</strong><input id="purchaseLoginEmail" type="email" placeholder="तुमचा Email" autocomplete="email" maxlength="254"></label>
-        <label><strong>Password</strong><input id="purchaseLoginPassword" type="password" placeholder="तुमचा Password" autocomplete="current-password" maxlength="72"></label>
-      </div>
-      <button id="purchaseLoginBtn" class="btn btn-primary btn-lg" onclick="purchaseLoginAndPay()">Login आणि Payment कडे जा</button>
-      <p style="font-size:14px;text-align:center;margin-top:14px">नवीन खाते हवे आहे? <a href="#" onclick="showPurchaseSignup();return false"><strong>खाते तयार करा</strong></a></p>
-    </div>`;
-  document.getElementById("modal").classList.add("show");
-  setTimeout(()=>document.getElementById("purchaseLoginEmail")?.focus(),100);
-}
-
-async function createPurchaseAccount(){
-  const name=document.getElementById("purchaseName")?.value.trim();
-  const mobile=document.getElementById("purchaseMobile")?.value.trim().replace(/\D/g,"");
-  const email=document.getElementById("purchaseEmail")?.value.trim().toLowerCase();
-  const password=document.getElementById("purchasePassword")?.value||"";
-  const btn=document.getElementById("purchaseSignupBtn");
-  if(!name||!email||!password||!mobile){alert("कृपया सर्व माहिती भरा.");return}
-  if(name.length<2){alert("कृपया योग्य पूर्ण नाव टाका.");return}
-  if(!/^[6-9]\d{9}$/.test(mobile)){alert("कृपया योग्य 10 अंकी मोबाईल नंबर टाका.");return}
-  if(password.length<6){alert("Password किमान 6 characters असावा.");return}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("कृपया योग्य Email address टाका.");return}
-  if(btn){btn.disabled=true;btn.textContent="खाते तयार होत आहे..."}
-  try{
-    const {data,error}=await sb.auth.signUp({
-      email,
-      password,
-      options:{data:{full_name:name,mobile:mobile}}
-    });
-    if(error){
-      const msg=String(error.message||"").toLowerCase();
-      if(msg.includes("already registered")||msg.includes("already been registered")||msg.includes("user already exists")){
-        showPurchaseLogin("या Email वर आधीच खाते आहे. कृपया Login करा; तुमचा course purchase flow तिथूनच पुढे सुरू होईल.");
-        return;
-      }
-      throw error;
-    }
-
-    // If Supabase email confirmation is enabled, there is no authenticated
-    // session yet and starting a payment would be unsafe/impossible.
-    if(!data?.session){
-      document.getElementById("modalContent").innerHTML=`
-        <div style="text-align:center;padding:10px">
-          <div style="font-size:52px">📧</div>
-          <h2>खाते तयार झाले!</h2>
-          <p>तुमच्या Email वर confirmation link पाठवली आहे. Email confirm केल्यानंतर खालील बटण दाबा.</p>
-          <button class="btn btn-primary" onclick="showPurchaseLogin()">Email Confirm केल्यानंतर Login करा</button>
-          <p style="font-size:13px;color:#64748b;margin-top:12px">Security साठी Email confirmation पूर्ण होईपर्यंत payment सुरू केले जाणार नाही.</p>
-        </div>`;
-      return;
-    }
-
-    await finishPurchaseSignupAndPay();
-  }catch(e){
-    console.error("Purchase signup failed",e);
-    if(btn){btn.disabled=false;btn.textContent="खाते तयार करा आणि Payment कडे जा"}
-    const raw=String(e.message||"");
-    if(/invalid.*email|email.*invalid/i.test(raw)) alert("कृपया योग्य Email address टाका.");
-    else if(/password/i.test(raw)) alert("Password किमान 6 characters असावा.");
-    else alert(raw||"Account तयार करता आले नाही. कृपया पुन्हा प्रयत्न करा.");
-  }
-}
-
-async function finishPurchaseSignupAndPay(){
-  const courseName=esc(course?.title||"हा कोर्स");
-  document.getElementById("modalContent").innerHTML=`
-    <div style="text-align:center;padding:10px">
-      <div style="font-size:52px">✅</div>
-      <h2>खाते यशस्वीपणे तयार झाले!</h2>
-      <p><strong>${courseName}</strong> साठी secure payment सुरू करत आहोत...</p>
-      <div style="margin-top:14px;color:#64748b;font-size:14px">कृपया payment window बंद करू नका.</div>
-    </div>`;
-  if(typeof window.refreshKeepLearningAuth==="function") await window.refreshKeepLearningAuth();
-  await new Promise(resolve=>setTimeout(resolve,700));
-  closeModal();
-  await loadAccess();
-  await enroll();
-}
-
-async function purchaseLoginAndPay(){
-  const email=document.getElementById("purchaseLoginEmail")?.value.trim().toLowerCase();
-  const password=document.getElementById("purchaseLoginPassword")?.value||"";
-  const btn=document.getElementById("purchaseLoginBtn");
-  if(!email||!password){alert("कृपया Email आणि Password भरा.");return}
-  if(btn){btn.disabled=true;btn.textContent="Login होत आहे..."}
-  try{
-    const {data,error}=await sb.auth.signInWithPassword({email,password});
-    if(error) throw error;
-    if(!data?.session) throw new Error("Login session तयार झाली नाही. कृपया पुन्हा प्रयत्न करा.");
-    await finishPurchaseSignupAndPay();
-  }catch(e){
-    console.error("Purchase login failed",e);
-    if(btn){btn.disabled=false;btn.textContent="Login आणि Payment कडे जा"}
-    alert(e.message||"Login करता आले नाही. कृपया Email आणि Password तपासा.");
-  }
-}
-
 async function enroll(){
   const btn=document.getElementById("enrollBtn");
   const {data:{user}}=await sb.auth.getUser();
-  if(!user){showPurchaseSignup();return}
+  if(!user){showLogin();return}
   if(enrolled)return;
   if(!window.Razorpay){alert("Payment gateway could not load. Please refresh and try again.");return}
 
@@ -432,16 +263,6 @@ async function enroll(){
           });
           const result=await verifyResp.json();
           if(!verifyResp.ok) throw new Error(result.error||"पेमेंट पडताळणी अयशस्वी झाली.");
-          // Meta Pixel: record a Purchase only after server-side payment verification succeeds.
-          if (typeof fbq === "function") {
-            fbq("track", "Purchase", {
-              value: Number(order.amount || 0) / 100,
-              currency: order.currency || "INR",
-              content_name: order.courseTitle || course.title,
-              content_type: "product",
-              content_ids: [String(id)]
-            });
-          }
           alert("Payment successful! Your course is now unlocked.");
           location.reload();
         }catch(err){
