@@ -2,6 +2,7 @@ const SUPABASE_URL="https://vowlzxhgjyzwzlhdgrnz.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const icons=["💻","📊","🎨","📣","📱","🐍","☁️","📈","📚","🎓"];
+const HINDI_COURSE_ID="b7d4d1d7-8b7f-4b0e-9b7a-3a8b2d6c4101";
 let cachedCourses=[];
 
 async function loadCourses(){
@@ -15,10 +16,10 @@ function renderCourses(list){
  if(!list.length){grid.innerHTML='<div class="loading">No published courses yet. Admin can add the first course.</div>';return}
  grid.innerHTML=list.map((c,i)=>`<article class="course">
  <div class="course-img">${c.thumbnail_url?`<img src="${esc(c.thumbnail_url)}" alt="">`:icons[i%icons.length]}</div>
- <div class="course-body"><h3>${esc(c.title)}</h3><p>${esc(c.description||"Online course")}</p><p class="course-audience-short"><b>कोणासाठी?</b> गृहिणी • विद्यार्थी • कर्मचारी • उद्योजक • व्यवसायिक • फ्रीलांसर • शिक्षक • Job Seekers • Professionals</p>
- <div class="rating">★★★★★ <span>${c.rating||"5.0"} रेटिंग</span></div>
- <div class="price">${c.original_price && Number(c.original_price)>Number(c.price)?`<s>₹${Number(c.original_price).toLocaleString("en-IN")}</s> <strong>₹${Number(c.price).toLocaleString("en-IN")}</strong> <small>/ संपूर्ण कोर्स</small><b class="discount-badge">${Math.round((1-Number(c.price)/Number(c.original_price))*100)}% OFF</b>`:`<strong>₹${Number(c.price).toLocaleString("en-IN")}</strong> <small>/ संपूर्ण कोर्स</small>`}</div>
- <a class="btn btn-primary course-btn" href="course.html?id=${encodeURIComponent(c.id)}">कोर्स पहा</a>
+ <div class="course-body ${String(c.id)===HINDI_COURSE_ID||String(c.content_language||"").toLowerCase()==="hindi"?"hindi-course-card":""}"><h3>${esc(c.title)}</h3><p>${esc(c.description||"Online course")}</p>${String(c.id)===HINDI_COURSE_ID||String(c.content_language||"").toLowerCase()==="hindi"?`<p class="course-audience-short"><b>यह कोर्स किन लोगों के लिए है?</b> गृहिणी • विद्यार्थी • कर्मचारी • उद्यमी • व्यवसायी • फ्रीलांसर • शिक्षक • Job Seekers • Professionals</p>`:`<p class="course-audience-short"><b>कोणासाठी?</b> गृहिणी • विद्यार्थी • कर्मचारी • उद्योजक • व्यवसायिक • फ्रीलांसर • शिक्षक • Job Seekers • Professionals</p>`}
+ <div class="rating">★★★★★ <span>${c.rating||"5.0"} Rating</span></div>
+ <div class="price">${c.original_price && Number(c.original_price)>Number(c.price)?`<s>₹${Number(c.original_price).toLocaleString("en-IN")}</s> <strong>₹${Number(c.price).toLocaleString("en-IN")}</strong> <small>/ Full Course</small><b class="discount-badge">${Math.round((1-Number(c.price)/Number(c.original_price))*100)}% OFF</b>`:`<strong>₹${Number(c.price).toLocaleString("en-IN")}</strong> <small>/ Full Course</small>`}</div>
+ <a class="btn btn-primary course-btn" href="course.html?id=${encodeURIComponent(c.id)}">View Course</a>
  </div></article>`).join("");
 }
 document.getElementById("search").addEventListener("input",e=>{

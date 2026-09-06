@@ -2,6 +2,13 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Course — KeepLearning</title><link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+.hindi-course .course-hero-text h1,.hindi-course .course-hero-text>p,.hindi-course .course-audience-box,.hindi-course .course-detail-labels,.hindi-course .course-meta,.hindi-course .section-head,.hindi-course .empty-state,.hindi-course .lesson-info{font-family:"Noto Sans Devanagari",sans-serif}
+.hindi-course-card h3,.hindi-course-card p,.hindi-course-card .course-audience-short{font-family:"Noto Sans Devanagari",sans-serif}
+</style>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <!-- Meta Pixel Code -->
 <script>
@@ -29,7 +36,7 @@ src="https://www.facebook.com/tr?id=1092467633196590&ev=PageView&noscript=1"
     </a>
     <div class="course-nav-actions">
       <a class="back-courses-btn" href="index.html#courses" aria-label="सर्व कोर्स">
-        <span class="back-arrow">←</span><span>सर्व कोर्स</span>
+        <span class="back-arrow">←</span><span>All Courses</span>
       </a>
       <div id="accountArea" class="account-area">
         <button class="btn btn-outline" onclick="openSiteLogin()">Login</button>
@@ -52,6 +59,14 @@ const SUPABASE_ANON_KEY="sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const id=new URLSearchParams(location.search).get("id");
 let course=null, lessons=[], enrolled=false;
+const HINDI_COURSE_ID="b7d4d1d7-8b7f-4b0e-9b7a-3a8b2d6c4101";
+let isHindiCourse=false;
+const ui={
+  hi:{rating:"⭐ रेटिंग",level:"📚 स्तर",audienceTitle:"👥 यह कोर्स किन लोगों के लिए है?",audience:"यह कोर्स गृहिणियों, विद्यार्थियों, नौकरी करने वाले कर्मचारियों, उद्यमियों, छोटे-बड़े व्यवसायियों, फ्रीलांसरों, शिक्षकों, नौकरी खोजने वालों, प्रोफेशनल्स और AI सीखकर अपनी कौशल बढ़ाने वाले हर व्यक्ति के लिए उपयोगी है।",details:["📘 पूरा हिंदी प्रैक्टिकल कोर्स","💰 AI से कमाई के वास्तविक तरीके","📄 130 पेज की हिंदी PDF"],content:"कोर्स की सामग्री",lockedTitle:"🔒 कोर्स का अध्ययन सामग्री लॉक है",lockedText:"पूरी कोर्स सामग्री और अध्ययन PDF पाने के लिए खरीदारी पूरी करें।",noLessons:"इस कोर्स की मुख्य सामग्री पूरी हिंदी PDF में दी गई है।",buy:"Buy Course / Unlock",shareBtn:"↗ Share Course",pdf:"📘 Download Complete Course PDF",unlocked:"✓ ✓ Course Unlocked",login:"Login to Continue"},
+  en:{rating:"⭐ Rating",level:"📚 Level",audienceTitle:"👥 Who is this course for?",audience:"This course is useful for learners who want practical skills and real-world results.",details:["📘 Complete practical course","🎯 Practical skills","📄 Course PDF"],content:"Course Content",lockedTitle:"🔒 Course Content is Locked",lockedText:"Complete your purchase to access the course content and study material.",noLessons:"No lessons have been added yet.",buy:"Buy Course / Unlock",shareBtn:"↗ Share Course",pdf:"📘 Download Complete Course PDF",unlocked:"✓ ✓ Course Unlocked",login:"Login to Continue"}
+};
+function T(k){return (isHindiCourse?ui.hi:ui.en)[k]||ui.en[k]||k;}
+
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 
@@ -66,6 +81,9 @@ async function init(){
     return;
   }
   course=data;
+  isHindiCourse=String(course.content_language||"").toLowerCase()==="hindi" || String(course.id)===HINDI_COURSE_ID;
+  document.documentElement.lang=isHindiCourse?"hi":"en";
+  document.body.classList.toggle("hindi-course",isHindiCourse);
   document.title=course.title+" — KeepLearning";
 
   const priceHtml = course.original_price && Number(course.original_price)>Number(course.price)
@@ -78,18 +96,18 @@ async function init(){
       <h1>${esc(course.title)}</h1>
       <p>${esc(course.description||"")}</p>
       <div class="course-meta">
-        <span>⭐ रेटिंग ${course.rating||"5.0"}</span>
-        <span>📚 पातळी: ${esc(course.level||"सर्व स्तर")}</span>
+        <span>${T("rating")} ${course.rating||"5.0"}</span>
+        <span>${T("level")}: ${esc(course.level||"All Levels")}</span>
       </div>
       <div class="course-audience-box">
-        <strong>👥 हा कोर्स कोणासाठी आहे?</strong>
-        <p>हा कोर्स गृहिणी, विद्यार्थी, नोकरी करणारे कर्मचारी, उद्योजक, छोटे-मोठे व्यवसायिक, फ्रीलांसर, शिक्षक, जॉब शोधणारे, प्रोफेशनल्स आणि AI शिकून स्वतःची कौशल्ये वाढवू इच्छिणाऱ्या प्रत्येकासाठी उपयुक्त आहे.</p>
+        <strong>${T("audienceTitle")}</strong>
+        <p>${T("audience")}</p>
       </div>
-      <div class="course-detail-labels"><span>📚 संपूर्ण ऑनलाइन अभ्यासक्रम</span><span>🎯 व्यावहारिक कौशल्यांवर भर</span><span>📘 अभ्यासासाठी PDF</span></div><div class="course-price">${priceHtml} <small>/ संपूर्ण कोर्स</small></div>
+      <div class="course-detail-labels">${T("details").map(x=>`<span>${x}</span>`).join("")}</div><div class="course-price">${priceHtml} <small>/ Full Course</small></div>
       <div class="course-actions">
-        <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">कोर्स खरेदी करून अनलॉक करा</button>
-        <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">↗ कोर्स शेअर करा</button>
-        <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" disabled>📘 संपूर्ण कोर्स PDF डाउनलोड करा</button>
+        <button id="enrollBtn" class="btn btn-primary btn-lg" onclick="enroll()">${T("buy")}</button>
+        <button id="shareBtn" class="btn btn-share btn-lg" onclick="openShareMenu()" type="button">${T("shareBtn")}</button>
+        <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" disabled>${T("pdf")}</button>
       </div>
     </div>
     <div class="course-hero-icon">${course.thumbnail_url?`<img src="${esc(course.thumbnail_url)}" alt="">`:"💻"}</div>`;
@@ -108,14 +126,14 @@ async function loadAccess(){
       pdfBtn.style.display="inline-flex";
       pdfBtn.disabled=true;
       pdfBtn.onclick=null;
-      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
+      pdfBtn.title="Available after successful payment";
     }
     area.innerHTML=`
-      <div class="section-head left"><h2>कोर्सची <span>सामग्री</span></h2></div>
+      <div class="section-head left"><h2>${T("content")}</h2></div>
       <div class="empty-state">
-        <h3>🔒 कोर्सचे व्हिडिओ लॉक आहेत</h3>
-        <p>सर्व व्हिडिओ धडे आणि संपूर्ण अभ्यास PDF मिळवण्यासाठी लॉगिन करून कोर्सची खरेदी पूर्ण करा.</p>
-        <button class="btn btn-primary" onclick="showLogin()">पुढे जाण्यासाठी लॉगिन करा</button>
+        <h3>${T("lockedTitle")}</h3>
+        <p>${T("lockedText")}</p>
+        <button class="btn btn-primary" onclick="showLogin()">${T("login")}</button>
       </div>`;
     return;
   }
@@ -136,39 +154,38 @@ async function loadAccess(){
   const btn=document.getElementById("enrollBtn");
 
   if(!enrolled){
-    if(btn) btn.textContent="कोर्स खरेदी करा / अनलॉक करा";
+    if(btn) btn.textContent=T("buy");
     const pdfBtn=document.getElementById("coursePdfBtn");
     if(pdfBtn){
       pdfBtn.style.display="inline-flex";
       pdfBtn.disabled=true;
       pdfBtn.onclick=null;
-      pdfBtn.title="पेमेंट पूर्ण केल्यानंतर हा पर्याय उपलब्ध होईल";
+      pdfBtn.title="Available after successful payment";
     }
     area.innerHTML=`
-      <div class="section-head left"><h2>कोर्सची <span>सामग्री</span></h2></div>
+      <div class="section-head left"><h2>${T("content")}</h2></div>
       <div class="empty-state">
-        <h3>🔒 कोर्सचा अभ्यासक्रम is Locked</h3>
-        <p>सर्व व्हिडिओ धडे आणि अभ्यास साहित्य पाहण्यासाठी कोर्सची खरेदी पूर्ण करा.</p>
-        
+        <h3>${T("lockedTitle")}</h3>
+        <p>${T("lockedText")}</p>
       </div>`;
     return;
   }
 
-  if(btn) btn.textContent="✓ ✓ कोर्स अनलॉक झाला";
+  if(btn) btn.textContent=T("unlocked");
   if(btn) btn.disabled=true;
   const pdfBtn=document.getElementById("coursePdfBtn");
   if(pdfBtn){
     pdfBtn.style.display="inline-flex";
     pdfBtn.disabled=false;
-    pdfBtn.title="संपूर्ण कोर्स PDF डाउनलोड करा";
+    pdfBtn.title="Download complete course PDF";
     pdfBtn.onclick=async()=>{
       pdfBtn.disabled=true;
       const originalText=pdfBtn.textContent;
-      pdfBtn.textContent="⏳ PDF तयार होत आहे...";
+      pdfBtn.textContent="⏳ Preparing PDF...";
       try{
         const {data:{session}}=await sb.auth.getSession();
         const token=session?.access_token;
-        if(!token) throw new Error("कृपया पुन्हा लॉगिन करा.");
+        if(!token) throw new Error("Please login again.");
         const response=await fetch("/api/download-pdf",{
           method:"POST",
           headers:{
@@ -178,10 +195,10 @@ async function loadAccess(){
           body:JSON.stringify({courseId:id})
         });
         const result=await response.json().catch(()=>({}));
-        if(!response.ok || !result.signedUrl) throw new Error(result.error||"PDF डाउनलोड करता आला नाही.");
+        if(!response.ok || !result.signedUrl) throw new Error(result.error||"Unable to download PDF.");
         window.open(result.signedUrl,"_blank","noopener");
       }catch(e){
-        alert(e.message||"PDF डाउनलोड करता आला नाही.");
+        alert(e.message||"Unable to download PDF.");
       }finally{
         pdfBtn.disabled=false;
         pdfBtn.textContent=originalText;
@@ -205,14 +222,14 @@ async function loadLessons(){
 
   lessons=data||[];
   if(!lessons.length){
-    area.innerHTML="<div class='empty-state'><h3>No lessons added yet</h3><p>Admin can add videos from the Admin Dashboard.</p></div>";
+    area.innerHTML=`<div class='empty-state'><h3>${T("noLessons")}</h3><p>${isHindiCourse?"इस कोर्स की मुख्य सामग्री पूरी हिंदी PDF में उपलब्ध है।":"Admin can add videos from the Admin Dashboard."}</p></div>`;
     return;
   }
 
   area.innerHTML=`
     <div class="section-head left">
-      <h2>कोर्सची <span>सामग्री</span></h2>
-      <p>${lessons.length} धडे — सर्व अनलॉक आहेत</p>
+      <h2>${T("content")}</h2>
+      <p>${lessons.length} ${isHindiCourse?"अध्याय — सभी अनलॉक हैं":"lessons — all unlocked"}</p>
     </div>
     <div class="lessons">
       ${lessons.map((l,i)=>`
@@ -225,7 +242,7 @@ async function loadLessons(){
           <div class="lesson-action">
             ${l.video_url
               ? `<button class="btn btn-primary" onclick="playVideo(${JSON.stringify(l.video_url)},${JSON.stringify(l.title)})">▶ व्हिडिओ पहा</button>`
-              : "<span class='muted'>व्हिडिओ जोडलेला नाही</span>"}
+              : "<span class='muted'>Video not added</span>"}
           </div>
         </article>`).join("")}
     </div>`;
