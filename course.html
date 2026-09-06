@@ -59,7 +59,12 @@ const SUPABASE_ANON_KEY="sb_publishable_3ZjKK7CFwuE9kPUyiQNxlg_TMdUh3qY";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const id=new URLSearchParams(location.search).get("id");
 let course=null, lessons=[], enrolled=false;
-const HINDI_COURSE_ID="b7d4d1d7-8b7f-4b0e-9b7a-3a8b2d6c4101";
+const HINDI_COURSE_ID="14e5960c-51f4-4e76-ae1a-833d64e25531";
+const ORIGINAL_AI_COURSE_ID="6a946d1e-c258-4dfb-95f5-357d7a163c40";
+const COURSE_COVER_IMAGES={
+  [HINDI_COURSE_ID]:"assets/ai-income-course-cover.jpg",
+  [ORIGINAL_AI_COURSE_ID]:"assets/ai-marathi-course-cover.jpg"
+};
 let isHindiCourse=false;
 const ui={
   hi:{rating:"⭐ रेटिंग",level:"📚 स्तर",audienceTitle:"👥 यह कोर्स किन लोगों के लिए है?",audience:"यह कोर्स गृहिणियों, विद्यार्थियों, नौकरी करने वाले कर्मचारियों, उद्यमियों, छोटे-बड़े व्यवसायियों, फ्रीलांसरों, शिक्षकों, नौकरी खोजने वालों, प्रोफेशनल्स और AI सीखकर अपनी कौशल बढ़ाने वाले हर व्यक्ति के लिए उपयोगी है।",details:["📘 पूरा हिंदी प्रैक्टिकल कोर्स","💰 AI से कमाई के वास्तविक तरीके","📄 130 पेज की हिंदी PDF"],content:"कोर्स की सामग्री",lockedTitle:"🔒 कोर्स का अध्ययन सामग्री लॉक है",lockedText:"पूरी कोर्स सामग्री और अध्ययन PDF पाने के लिए खरीदारी पूरी करें।",noLessons:"इस कोर्स की मुख्य सामग्री पूरी हिंदी PDF में दी गई है।",buy:"Buy Course / Unlock",shareBtn:"↗ Share Course",pdf:"📘 Download Complete Course PDF",unlocked:"✓ ✓ Course Unlocked",login:"Login to Continue"},
@@ -110,7 +115,7 @@ async function init(){
         <button id="coursePdfBtn" class="btn btn-primary btn-lg course-pdf-btn" type="button" disabled>${T("pdf")}</button>
       </div>
     </div>
-    <div class="course-hero-icon">${course.thumbnail_url?`<img src="${esc(course.thumbnail_url)}" alt="">`:"💻"}</div>`;
+    <div class="course-hero-icon">${(COURSE_COVER_IMAGES[String(course.id)]||course.thumbnail_url)?`<img src="${esc(COURSE_COVER_IMAGES[String(course.id)]||course.thumbnail_url)}" alt="Course learners">`:"💻"}</div>`;
 
   await loadAccess();
 }
